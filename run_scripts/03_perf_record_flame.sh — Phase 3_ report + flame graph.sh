@@ -20,7 +20,7 @@ SVG="${BENCH}.svg"
 RUN=(python3-dbg -m pyperformance run --bench "${BENCH}")
 
 echo "==> [1/4] Recording samples at ~999 Hz with call graphs ..."
-perf record -F 999 -g -- "${RUN[@]}"
+perf record -e cpu-clock -F 999 -g -- "${RUN[@]}"
 # If stacks look broken (missing frames), swap the line above for:
 #   perf record -F 999 --call-graph dwarf -- "${RUN[@]}"
 

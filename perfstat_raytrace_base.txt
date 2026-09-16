@@ -1,0 +1,45 @@
+########## perf stat : core counter set (repeated x5 for std dev) ##########
+WARNING:root:no benchmark named 'raytrace_base'
+Python benchmark suite 1.14.0
+
+
+
+ERROR: No benchmark was run
+WARNING:root:no benchmark named 'raytrace_base'
+Python benchmark suite 1.14.0
+
+
+
+ERROR: No benchmark was run
+WARNING:root:no benchmark named 'raytrace_base'
+Python benchmark suite 1.14.0
+
+
+
+ERROR: No benchmark was run
+WARNING:root:no benchmark named 'raytrace_base'
+Python benchmark suite 1.14.0
+
+
+
+ERROR: No benchmark was run
+WARNING:root:no benchmark named 'raytrace_base'
+Python benchmark suite 1.14.0
+
+
+
+ERROR: No benchmark was run
+
+ Performance counter stats for 'python3-dbg -m pyperformance run --bench raytrace_base' (5 runs):
+
+                 0      cycles                                                      
+        4906653538      instructions                                                  ( +-  0.16% )
+          38640738      cache-references                                              ( +-  0.10% )
+           1112319      cache-misses              #    2.877 % of all cache refs      ( +-  1.59% )
+        1243122096      branches                                                      ( +-  0.20% )
+          17657166      branch-misses             #    1.42% of all branches          ( +-  0.13% )
+               244      context-switches                                              ( +-  0.46% )
+             14978      page-faults                                                   ( +-  0.01% )
+
+           1.36407 +- 0.00185 seconds time elapsed  ( +-  0.14% )
+

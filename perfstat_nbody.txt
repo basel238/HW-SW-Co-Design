@@ -1,0 +1,397 @@
+########## perf stat : core counter set (repeated x5 for std dev) ##########
+Python benchmark suite 1.14.0
+
+Creating the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /usr/bin/python3-dbg -m venv --without-pip /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m ensurepip -v -U
+Using pip 22.0.2 from /tmp/tmpfdyc1t70/pip-22.0.2-py3-none-any.whl/pip (python 3.10)
+Looking in links: /tmp/tmpfdyc1t70
+Processing /tmp/tmpfdyc1t70/setuptools-59.6.0-py3-none-any.whl
+Processing /tmp/tmpfdyc1t70/pip-22.0.2-py3-none-any.whl
+Installing collected packages: setuptools, pip
+  changing mode of /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/pip3 to 755
+  changing mode of /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/pip3.10 to 755
+  changing mode of /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/pip3.10 to 755
+Successfully installed pip-22.0.2 setuptools-59.6.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install -U 'setuptools>=18.5' wheel
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: setuptools>=18.5 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (59.6.0)
+Collecting setuptools>=18.5
+  Using cached setuptools-84.0.0-py3-none-any.whl (818 kB)
+Collecting wheel
+  Using cached wheel-0.48.0-py3-none-any.whl (33 kB)
+Collecting packaging>=24.0
+  Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: setuptools, packaging, wheel
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 59.6.0
+    Uninstalling setuptools-59.6.0:
+      Successfully uninstalled setuptools-59.6.0
+Successfully installed packaging-26.3 setuptools-84.0.0 wheel-0.48.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip --version
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+pip 22.0.2 from /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip (python 3.10)
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Collecting pyperf==2.10.0
+  Using cached pyperf-2.10.0-py3-none-any.whl (144 kB)
+Collecting psutil>=5.9.0
+  Using cached psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Installing collected packages: psutil, pyperf
+Successfully installed psutil-7.2.2 pyperf-2.10.0
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmp9ybdlpto --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 480 ms +- 4 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:25:50.869527
+End date: 2026-09-16 12:26:36.219090
+
+### nbody ###
+Mean +- std dev: 480 ms +- 4 ms
+
+Python benchmark suite 1.14.0
+
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: pyperf==2.10.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (from pyperf==2.10.0) (7.2.2)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmpi4oqcl41 --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 480 ms +- 4 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:26:43.224528
+End date: 2026-09-16 12:27:28.467831
+
+### nbody ###
+Mean +- std dev: 480 ms +- 4 ms
+
+Python benchmark suite 1.14.0
+
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: pyperf==2.10.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (from pyperf==2.10.0) (7.2.2)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmp04n7_0jz --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 480 ms +- 3 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:27:35.455573
+End date: 2026-09-16 12:28:20.716952
+
+### nbody ###
+Mean +- std dev: 480 ms +- 3 ms
+
+Python benchmark suite 1.14.0
+
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: pyperf==2.10.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (from pyperf==2.10.0) (7.2.2)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmpzfzf_ec0 --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 479 ms +- 2 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:28:27.711764
+End date: 2026-09-16 12:29:12.912022
+
+### nbody ###
+Mean +- std dev: 479 ms +- 2 ms
+
+Python benchmark suite 1.14.0
+
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: pyperf==2.10.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (from pyperf==2.10.0) (7.2.2)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmp1byptnnr --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 479 ms +- 1 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:29:19.900407
+End date: 2026-09-16 12:30:05.080252
+
+### nbody ###
+Mean +- std dev: 479 ms +- 1 ms
+
+
+ Performance counter stats for 'python3-dbg -m pyperformance run --bench nbody' (5 runs):
+
+                 0      cycles                                                      
+      283555551371      instructions                                                  ( +-  4.80% )
+         370856315      cache-references                                              ( +- 20.79% )
+          10888780      cache-misses              #    2.438 % of all cache refs      ( +- 15.43% )
+       65627875417      branches                                                      ( +-  5.10% )
+         429642875      branch-misses             #    0.62% of all branches          ( +-  9.49% )
+              3436      context-switches                                              ( +- 20.14% )
+            149513      page-faults                                                   ( +- 13.23% )
+
+             56.06 +- 3.84 seconds time elapsed  ( +-  6.85% )
+
+
+########## perf stat : L1 D-cache detail ##########
+Python benchmark suite 1.14.0
+
+
+==================================================
+( 1/1) creating venv for benchmark (nbody)
+
+(trying common venv first)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install pyperf==2.10.0
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: pyperf==2.10.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (from pyperf==2.10.0) (7.2.2)
+Installing requirements into the virtual environment /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip install psutil
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+Requirement already satisfied: psutil in ./venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages (7.2.2)
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -m pip freeze
+/root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/lib/python3.10/site-packages/pip/_internal/locations/_distutils.py:9: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+  from distutils.cmd import Command as DistutilsCommand
+/usr/lib/python3.10/distutils/command/install.py:13: DeprecationWarning: The distutils.sysconfig module is deprecated, use sysconfig instead
+  from distutils.sysconfig import get_config_vars, is_virtual_environment
+packaging==26.3
+psutil==7.2.2
+pyperf==2.10.0
+
+[1/1] nbody...
+# /root/HW-SW-Co-Design/venv/cpython3.10-73966b47cd1a-compat-31b33d68c68a/bin/python -u /usr/local/lib/python3.10/dist-packages/pyperformance/data-files/benchmarks/bm_nbody/run_benchmark.py --output /tmp/tmpsxujloig --inherit-environ PYPERFORMANCE_RUNID
+.....................
+nbody: Mean +- std dev: 478 ms +- 2 ms
+
+Performance version: 1.14.0
+Python version: 3.10.12 (64-bit)
+Report on Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+Number of logical CPUs: 1
+Start date: 2026-09-16 12:30:12.033731
+End date: 2026-09-16 12:30:56.988166
+
+### nbody ###
+Mean +- std dev: 478 ms +- 2 ms
+
+
+ Performance counter stats for 'python3-dbg -m pyperformance run --bench nbody':
+
+       84712938004      L1-dcache-loads                                             
+         470395722      L1-dcache-load-misses     #    0.56% of all L1-dcache accesses
+
+      51.837292906 seconds time elapsed
+
+      50.866874000 seconds user
+       0.663943000 seconds sys
+
+
+
+########## perf stat : top-down (Retiring / Bad-Spec / Frontend / Backend) ##########
+top down event configuration requires system-wide mode (-a)
+(--topdown may be unavailable inside a VM)
