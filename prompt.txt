@@ -1,0 +1,42 @@
+User request for the initial audit:
+
+Judge the quality of the run scripts that aim to solve the first parts of this project.
+Attached are also the results and analysis of those results. many of which don't
+make sense, such as missing ipc, flamegraph with a huge spike in pyEval / Interpret
+frames and so on. Judge every metric, and every measurement method against what
+is required and come up with issues in the analysis / the way we ran the code and
+scripts. Try also to justify and explain the results we got.
+
+User request for this revision:
+
+can you write new updated scripts that run this better?
+and see the following analysis of issues found in the script, see what you
+agree / disagree with and let me know what needs to be updated
+
+The user also supplied a detailed critique. Its claims and their assessment are
+documented in ANALYSIS_REVIEW.md.
+
+This records the user requests for this revision. It is not a complete record
+of all earlier project AI interactions; add your earlier prompts and any later
+optimization prompts before the final course submission.
+
+User request to review another tool's revised scripts:
+
+same tool that gave me the previous analysis, also gave me these updated scripts:
+do you think it's worth to investigate / integrate something from them?
+understand and study the chanegs made and let me know what you think is needed
+
+User request for v3 integration:
+
+Did you integrate the good ideas?
+I want us to have the best of everything
+Give me full new scripts package
+
+User request for repository reorganization:
+plus, this is my main repo
+how can I make it look like the readme says it should look
+lets update the scripts and perform the needed git operations
+
+User migration diagnosis:
+160000 41fee1f99f9276008b7cd112fca19dc3ea84ac32 0\tFlameGraph
+.gitmodules: No such file or directory

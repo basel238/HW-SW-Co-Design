@@ -1,0 +1,2 @@
+# Optional statistical Python profiler; installed outside every measurement.
+py-spy==0.4.2

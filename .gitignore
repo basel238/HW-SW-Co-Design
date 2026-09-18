@@ -1,71 +1,12 @@
-# HW/SW Co-Design: Python + SystemVerilog
-# Keep source code, scripts, README files, PDFs, and intentional results in Git.
-
-# macOS and editor temporary files
-.DS_Store
-.idea/
-*.swp
-*.swo
-*~
-
-# Local configuration and secrets
-.env
-.env.*
-!.env.example
-!.env.sample
-*.local
-
-# Python bytecode, environments, packages, and test caches
-__pycache__/
-*.py[cod]
-*$py.class
 .venv/
-venv/
-env/
-ENV/
-*.egg-info/
-.eggs/
-build/
-dist/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.tox/
-.nox/
-.coverage
-.coverage.*
-htmlcov/
-coverage.xml
-
-# SystemVerilog simulation and generated build output
-# Verilator
-obj_dir/
-# cocotb/pytest
-sim_build/
-# VCS
-simv
-simv.daidir/
-csrc/
-# Icarus Verilog compiled simulation
-*.vvp
-# Waveforms and coverage databases
-*.vcd
-*.fst
-*.fsdb
-*.vpd
-*.wlf
-*.ghw
-*.ucdb
-*.vdb/
-# Questa/ModelSim transcript
-transcript
-vsim.wlf
-
-# Generated logs and temporary outputs
-*.log
-*.jou
-*.tmp
-*.temp
-
-# Intentionally NOT ignored: *.py, *.sv, *.svh, *.v, *.pdf, *.md,
-# requirements*.txt, pyproject.toml, and source project configuration.
+__pycache__/
+*.pyc
+results/**/perf.data*
+results/**/native-stacks.txt
+results/**/*.pstats
+results/**/source/
+results/**/*.ppm
+results/**/*.fifo
+results/**/jitted-*.so
+# Keep source, metadata, JSON, readable reports, folded stacks and SVGs.
+# Retain ignored raw traces locally or archive them separately before cleanup.
