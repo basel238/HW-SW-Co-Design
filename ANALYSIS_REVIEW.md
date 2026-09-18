@@ -40,7 +40,7 @@ The critique identifies the main failures correctly. Several explanations, perce
 
 ## What the replacement workflow should change
 
-1. Keep a single release interpreter and record its real path, version, build flags and dependency versions. Retaining Python 3.10 is valid; upgrading requires completely fresh matched baseline/optimized runs.
+1. Use a single debug interpreter (`Py_DEBUG=1`) and record its real path, version, build flags and dependency versions. Python 3.10+ is valid; the switch to debug or any later interpreter change requires completely fresh matched baseline/optimized runs. Earlier release observations above remain historical evidence.
 2. Freeze or copy the selected benchmark source, record its hash, and invoke that exact source for timing, counters and profiling. Keep baseline and candidate copies separate.
 3. Prepare dependencies before any measurement. Use normal multi-worker pyperf timing for final baseline/comparison; use fixed-work benchmark execution for PMU/profiling. State any remaining startup/warmup overhead explicitly or gate counters around a region of interest.
 4. Probe available counters on known work; preserve failures. Collect small simultaneous groups for ratios, save every repetition, record event-running percentages, and never synthesize IPC from nominal GHz.

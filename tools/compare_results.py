@@ -18,6 +18,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from python_environment import require_debug_python
+
 
 BOOTSTRAP_REPLICATES = 2000
 BOOTSTRAP_SEED = 20260917
@@ -84,6 +86,8 @@ def provenance_signature(provenance: dict, label: str) -> dict:
     for key in ("source_sha256", "source_tree_sha256", "toolkit_sha256"):
         require_sha(provenance[key], f"{label}.{key}")
     interpreter = require_keys(provenance["interpreter"], INTERPRETER_KEYS, f"{label}.interpreter")
+    if interpreter["py_debug"] is not True:
+        raise EvidenceError(f"{label}: optimization comparisons require debug Python evidence (Py_DEBUG=1)")
     require_sha(interpreter["executable_sha256"], f"{label}.interpreter.executable_sha256")
     timing = require_keys(provenance["timing"], TIMING_KEYS, f"{label}.timing")
     for key in ("processes", "values", "loops"):
@@ -340,6 +344,10 @@ def main() -> int:
     parser.add_argument("--correctness", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True, help="New comparison output directory")
     args = parser.parse_args()
+    try:
+        require_debug_python()
+    except RuntimeError as exc:
+        parser.error(str(exc))
     try:
         args.output.mkdir(parents=True, exist_ok=False)
     except OSError as exc:

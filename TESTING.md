@@ -1,4 +1,22 @@
-# v4.2 validation
+# Debug-only validation
+
+Validated 18 September 2026: **55 automated tests passed, with no skips**, under a temporary debug CPython 3.12.10 build (`Py_DEBUG=1`) on macOS. The suite covers debug-only launchers/workers, rejection of release comparison evidence and mismatched cached framework workers, removed CLI modes, setup preservation, the existing FIFO ACK framing checks and compact evidence archives. The synthetic sampler fixture now resolves its temporary driver path so it matches macOS's `/var` to `/private/var` alias.
+
+An isolated setup using the debug interpreter passed with the pinned dependencies. A genuine pyperformance 1.14.0 `--smoke` run passed for both benchmarks (2,000 nbody iterations and 24×24 raytrace), including cached worker debug flags and executable-hash validation before measurement. These smoke results were written outside this repository and are not performance evidence. All shell scripts passed `bash -n`, all toolkit/test Python files compiled, and `git diff --check` passed.
+
+The integration suite executes real debug benchmark timing, cProfile, workload/FIFO exchanges and FlameGraph rendering; its perf observations and course framework fixture remain synthetic. Actual Linux perf/PMU behavior, native stack quality and live py-spy sampling still require the VM. The first sandboxed test attempt could not read macOS system metadata through psutil; the complete suite passed with that read permitted. No measurement was substituted with release Python.
+
+On the VM after debug setup:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+bash scripts/12_course_reference.sh --smoke
+bash scripts/15_perf_gate_probe.sh
+```
+
+Running the unit suite with a release interpreter skips tests that execute workloads; it is not a substitute for the full debug suite. Existing results and benchmark sources are untouched. Earlier validation below records historical release behavior and does not describe the current interpreter policy.
+
+# v4.2 validation (historical)
 
 Validated 18 September 2026. **48 automated tests passed** under release CPython 3.12, including real FIFO ACK exchanges, invalid/missing replies, workload receipts, sampler validation, verified compaction, safe repository updates and evidence export.
 

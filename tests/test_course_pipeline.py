@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import sysconfig
 import tempfile
 import types
 import unittest
@@ -29,6 +30,7 @@ from test_perf_pipeline import SYNTHETIC_PERF
                      "Requires POSIX FIFO exchanges and the real Perl renderer")
 @unittest.skipUnless(importlib.util.find_spec("pyperf"),
                      "Run with .venv/bin/python for actual timing and cProfile")
+@unittest.skipUnless(sysconfig.get_config_var("Py_DEBUG"), "Actual measurements require debug Python")
 class CoursePipelineIntegration(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -44,7 +46,7 @@ class CoursePipelineIntegration(unittest.TestCase):
         self.settings["raytrace"].update(width=24, height=24, profile_calls=2, profile_warmups=1)
         self.settings.update(stat_repeats=1, affinity=None, command_timeout_seconds=30)
         self.args = types.SimpleNamespace(
-            benchmark=None, release_only=True, skip_python_sampling=True,
+            benchmark=None, skip_python_sampling=True,
             skip_optional_counters=True, keep_details=False,
         )
         binary_directory = Path(self.temp.name) / "bin"
@@ -68,7 +70,7 @@ class CoursePipelineIntegration(unittest.TestCase):
 
     @staticmethod
     def synthetic_framework_reference(settings, benchmark=None):
-        out = p.new_run("release-pyperformance-reference")
+        out = p.new_run("debug-pyperformance-reference")
         # This fixture is intentionally marked, never mistaken for real timing.
         p.dump(out / "pyperformance.json", {
             "synthetic_fixture_only": True,
@@ -96,7 +98,10 @@ class CoursePipelineIntegration(unittest.TestCase):
             self.assertGreater((out / name).stat().st_size, 0, name)
         summary = json.loads((out / "summary.json").read_text())
         self.assertTrue(summary["automated_collection_complete"])
-        self.assertFalse(summary["literal_guide_collection_complete"])
+        self.assertTrue(summary["literal_guide_collection_complete"])
+        self.assertEqual(summary["interpreter_kind"], "debug")
+        self.assertNotIn("guide_debug_reference", summary)
+        self.assertNotIn("release_only", summary)
         self.assertFalse(summary["coursework_complete"])
         self.assertEqual(summary["manual_review"], "pending")
         self.assertEqual(summary["required_missing"], [])
@@ -104,7 +109,7 @@ class CoursePipelineIntegration(unittest.TestCase):
         self.assertGreater(summary["evidence"]["verified_files"], 0)
         overview = (out / "README.md").read_text()
         self.assertIn("Required collection: complete", overview)
-        self.assertIn("incomplete/deferred", overview)
+        self.assertIn("Guide collection: **complete**", overview)
         self.assertNotIn("Traceback", overview)
         with zipfile.ZipFile(out / "evidence.zip") as archive:
             names = set(archive.namelist())
@@ -115,7 +120,9 @@ class CoursePipelineIntegration(unittest.TestCase):
                 for name in ("README.md", "timing.json", "perf.svg"):
                     self.assertGreater((visible / name).stat().st_size, 0, bench + "/" + name)
                 report = (visible / "README.md").read_text()
-                self.assertIn("Unprofiled release runtime", report)
+                self.assertIn("Unprofiled debug runtime", report)
+                self.assertNotIn("guide-perf.svg", report)
+                self.assertFalse((visible / "guide-perf.svg").exists())
                 self.assertIn("cProfile: top 12", report)
                 self.assertNotIn("Traceback", report)
                 self.assertIn("<svg", (visible / "perf.svg").read_text())
@@ -148,7 +155,7 @@ class CoursePipelineIntegration(unittest.TestCase):
         self.assertFalse((out / "nbody" / "perf.svg").exists())
         summary = json.loads((out / "summary.json").read_text())
         self.assertFalse(summary["automated_collection_complete"])
-        self.assertIn("nbody release perf profile", summary["required_missing"])
+        self.assertIn("nbody debug perf profile", summary["required_missing"])
         self.assertIn("Missing required perf evidence", (out / "nbody" / "README.md").read_text())
         self.assertIn("INCOMPLETE", (out / "README.md").read_text())
 

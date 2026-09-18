@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Real pyperformance references and separately labelled python3-dbg profiles."""
+"""Real pyperformance references using the shared debug Python environment."""
 import argparse
 import importlib.metadata
 import json
 import os
 from pathlib import Path
 import sys
-import sysconfig
 
 import pipeline as p
 
@@ -64,17 +63,17 @@ def build_manifest(out, c, benchmarks, smoke=False):
 
 def run_reference(c, benchmark=None, smoke=False):
     """Return (output_directory, valid_reference); smoke is never course evidence."""
+    p.require_debug_python()
     if smoke:
         c = smoke_settings(c)
     benchmarks = selected_benchmarks(benchmark)
-    debug = bool(sysconfig.get_config_var("Py_DEBUG"))
-    out = p.new_run(("guide-debug-" if debug else "release-") + "pyperformance-reference")
+    out = p.new_run("debug-pyperformance-reference")
     status = {"available": False, "smoke_only": smoke, "benchmarks": list(benchmarks),
               "framework": "pyperformance", "required_framework_version": "1.14.0",
-              "interpreter_kind": "guide-debug" if debug else "release",
+              "interpreter_kind": "debug",
               "interpreter": p.interpreter(), "unavailable_reason": None,
               "measurement_scope": "pyperformance's benchmark timers; no perf wrapper around the harness",
-              "use": "Framework reference only; use controlled release timing for optimization comparisons."}
+              "use": "Framework reference only; use controlled debug timing for optimization comparisons."}
     try:
         if importlib.metadata.version("pyperformance") != "1.14.0":
             raise RuntimeError("Run scripts/00_setup.sh to install pinned requirements-course.txt.")
@@ -112,6 +111,23 @@ def run_reference(c, benchmark=None, smoke=False):
             p.require(p.command(base + ["venv", "show", "--venv", str(venv)],
                                 out, "prepare-environment", 60, cwd=cache),
                       "pyperformance cache inspection failed")
+        # Reject a stale/wrong cache before any benchmark is launched.
+        status["worker_environment"] = str(venv)
+        p.require(p.command([str(venv / "bin/python"), "-c",
+                             "import hashlib,json,sys,sysconfig,importlib.metadata as m; from pathlib import Path; "
+                             "print(json.dumps({'executable':sys.executable,'version':sys.version,"
+                             "'executable_sha256':hashlib.sha256(Path(sys.executable).read_bytes()).hexdigest(),"
+                             "'py_debug':bool(sysconfig.get_config_var('Py_DEBUG')),"
+                             "'packages':sorted(d.metadata['Name']+'=='+d.version for d in m.distributions())}))"],
+                            out, "worker-environment", 30), "Worker environment capture failed")
+        worker = json.loads((out / "worker-environment.stdout.txt").read_text())
+        if worker["py_debug"] is not True:
+            raise RuntimeError("Framework worker must use debug Python (Py_DEBUG=1).")
+        if worker["executable_sha256"] != status["interpreter"]["executable_sha256"]:
+            raise RuntimeError("Framework worker executable differs from the requested interpreter.")
+        if "pyperf==2.10.0" not in worker["packages"]:
+            raise RuntimeError("Framework worker did not use pinned pyperf==2.10.0.")
+        status["worker_metadata"] = worker
         result = out / "pyperformance.json"
         argv = base + ["run"] + common + ["--python", p.PY, "--output", str(result),
                                          "--timeout", str(c["command_timeout_seconds"])]
@@ -131,22 +147,6 @@ def run_reference(c, benchmark=None, smoke=False):
                 raise RuntimeError("Framework output contains no positive timing values.")
             if p.tree_hash(Path(sources[bench]["path"]).parent) != sources[bench]["tree_sha256"]:
                 raise RuntimeError("Frozen benchmark source changed during reference measurement.")
-        status["worker_environment"] = str(venv)
-        p.require(p.command([str(venv / "bin/python"), "-c",
-                             "import hashlib,json,sys,sysconfig,importlib.metadata as m; from pathlib import Path; "
-                             "print(json.dumps({'executable':sys.executable,'version':sys.version,"
-                             "'executable_sha256':hashlib.sha256(Path(sys.executable).read_bytes()).hexdigest(),"
-                             "'py_debug':bool(sysconfig.get_config_var('Py_DEBUG')),"
-                             "'packages':sorted(d.metadata['Name']+'=='+d.version for d in m.distributions())}))"],
-                            out, "worker-environment", 30), "Worker environment capture failed")
-        worker = json.loads((out / "worker-environment.stdout.txt").read_text())
-        if worker["py_debug"] != debug:
-            raise RuntimeError("Framework worker build differs from requested debug/release build.")
-        if worker["executable_sha256"] != status["interpreter"]["executable_sha256"]:
-            raise RuntimeError("Framework worker executable differs from the requested interpreter.")
-        if "pyperf==2.10.0" not in worker["packages"]:
-            raise RuntimeError("Framework worker did not use pinned pyperf==2.10.0.")
-        status["worker_metadata"] = worker
         for action in ("metadata", "check", "stats"):
             p.command([p.PY, "-m", "pyperf", action, str(result)], out, action, 60)
         status["available"] = True
@@ -166,85 +166,14 @@ def run_reference(c, benchmark=None, smoke=False):
     return out, status["available"]
 
 
-def run_guide_reference(c, benchmark=None, smoke=False):
-    """Launch an isolated debug process; never alter pipeline.PY in a release run."""
-    out = p.new_run("guide-debug-reference")
-    executable = p.ROOT / ".venv-guide" / "bin" / "python"
-    status = {"available": False, "kind": "separate-guide-debug-reference",
-              "benchmarks": list(selected_benchmarks(benchmark)), "smoke_only": smoke,
-              "note": "Guide interpreter reference only. Do not merge its times/counters with release measurements.",
-              "guide_adaptation": "Profile fixed benchmark calls with perf after imports/warmup; do not profile the pyperformance harness.",
-              "unavailable_reason": None}
-    if not executable.is_file():
-        status["unavailable_reason"] = (
-            "No .venv-guide/bin/python. Install python3-dbg and matching venv support, "
-            "then rerun setup with INSTALL_GUIDE_DEBUG=1. Strict guide evidence remains incomplete.")
-    else:
-        argv = [str(executable), str(Path(__file__).resolve()), "--guide-worker", "--worker-output", str(out)]
-        if p.RUN_ROOT is not None:
-            argv += ["--run-root", str(p.RUN_ROOT)]
-        if benchmark:
-            argv += ["--benchmark", benchmark]
-        if smoke:
-            argv += ["--smoke"]
-        rc = p.command(argv, out, "guide-worker", c["command_timeout_seconds"] * (1 + len(status["benchmarks"])))
-        try:
-            worker = json.loads((out / "guide-worker-status.json").read_text())
-        except (OSError, ValueError):
-            worker = {}
-        status["worker"] = worker
-        status["available"] = rc == 0 and worker.get("available") is True
-        status["unavailable_reason"] = None if status["available"] else "Debug reference failed; inspect guide-worker logs and status."
-    p.dump(out / "guide-reference-status.json", status)
-    (out / "README.md").write_text("# Separate guide debug reference\n\n" + status["note"] + "\n\n" +
-                                   status["guide_adaptation"] + "\n\n" +
-                                   (status["unavailable_reason"] or "Collected; native stacks still require human review.") + "\n")
-    return out, status["available"]
-
-
-def guide_worker(c, args):
-    out = args.worker_output
-    if out is None or not out.is_dir():
-        raise RuntimeError("Guide worker requires an existing output directory.")
-    if not sysconfig.get_config_var("Py_DEBUG"):
-        raise RuntimeError("The guide environment must actually be a Py_DEBUG interpreter.")
-    if sys.flags.optimize or sys.version_info < (3, 10):
-        raise RuntimeError("Guide worker needs CPython 3.10+ without -O.")
-    if args.run_root is not None:
-        if not args.run_root.is_dir():
-            raise RuntimeError("Guide worker requires an existing scoped run root.")
-        p.RUN_ROOT = args.run_root.resolve()
-    if args.smoke:
-        c = smoke_settings(c)
-    status = {"interpreter": p.interpreter(), "native": {}, "available": False,
-              "human_stack_review": "pending", "smoke_only": args.smoke}
-    reference, reference_ok = run_reference(c, args.benchmark, args.smoke)
-    status["pyperformance"] = {"path": str(reference), "available": reference_ok}
-    for bench in selected_benchmarks(args.benchmark):
-        try:
-            native, ok = p.native(bench, "baseline", c, run_label_prefix="guide-debug-")
-            status["native"][bench] = {"path": str(native), "available": ok}
-        except (OSError, ValueError, RuntimeError) as exc:
-            status["native"][bench] = {"available": False, "error": str(exc)}
-    status["available"] = reference_ok and all(r["available"] for r in status["native"].values())
-    p.dump(out / "guide-worker-status.json", status)
-    return 0 if status["available"] else 3
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark", choices=p.BENCHMARKS, help="Default: both benchmarks")
-    parser.add_argument("--guide", action="store_true", help="Separate python3-dbg framework/native reference")
     parser.add_argument("--smoke", action="store_true", help="One framework value only; not course timing evidence")
-    parser.add_argument("--guide-worker", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--worker-output", type=Path, help=argparse.SUPPRESS)
-    parser.add_argument("--run-root", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     c = p.config()
-    if args.guide_worker:
-        return guide_worker(c, args)
     p.preflight()
-    _, ok = run_guide_reference(c, args.benchmark, args.smoke) if args.guide else run_reference(c, args.benchmark, args.smoke)
+    _, ok = run_reference(c, args.benchmark, args.smoke)
     return 0 if ok else 3
 
 

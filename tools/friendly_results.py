@@ -35,7 +35,7 @@ def short_log(record):
     source = stage_path(record)
     if not source:
         return record.get('reason', 'No capture was produced.')
-    for name in ('reference-status.json', 'guide-reference-status.json', 'pyspy-status.json'):
+    for name in ('reference-status.json', 'pyspy-status.json'):
         reason = read_json(source / name).get('unavailable_reason')
         if reason:
             return reason[:1000]
@@ -87,7 +87,7 @@ def counters_text(record):
     return lines
 
 
-def benchmark_view(out, bench, record, guide):
+def benchmark_view(out, bench, record):
     dest = out / bench
     dest.mkdir()
     lines = ['# ' + bench + ' — baseline evidence', '',
@@ -98,9 +98,9 @@ def benchmark_view(out, bench, record, guide):
         suite = pyperf.BenchmarkSuite.load(str(dest / 'timing.json'))
         for name in suite.get_benchmark_names():
             values = suite.get_benchmark(name).get_values()
-            lines += [f'Unprofiled release runtime: **{statistics.mean(values)*1000:.3f} ms per call**; '
+            lines += [f'Unprofiled debug runtime: **{statistics.mean(values)*1000:.3f} ms per call**; '
                       f'SD {statistics.stdev(values)*1000:.3f} ms across {len(values)} recorded values.' if len(values) > 1
-                      else f'Unprofiled runtime: {values[0]*1000:.3f} ms; only one value.', '']
+                      else f'Unprofiled debug runtime: {values[0]*1000:.3f} ms; only one value.', '']
         source = stage_path(record['timing'])
         warning_file = source / 'check.stdout.txt'
         if warning_file.is_file() and warning_file.read_text().strip():
@@ -146,35 +146,28 @@ def benchmark_view(out, bench, record, guide):
                   'use this to locate Python operations, not to estimate unprofiled speedup.', '',
                   '```text', stream.getvalue().strip(), '```', '']
     lines += ['## Counters', ''] + counters_text(record.get('counters', {}))
-    lines += ['## Guide debug reference', '']
-    if copy_artifact(guide, 'native.svg', dest / 'guide-perf.svg'):
-        lines += ['[Open guide-perf.svg](guide-perf.svg). Separate python3-dbg run for the guide. '
-                  'Do not merge its times or percentages with the release results. Inspect its stack health in the evidence.', '']
-    else:
-        lines += ['Not collected successfully for this benchmark; see the overall compliance status.', '']
     lines += ['## Interpretation to finish', '',
               '- Review the source explanation in `docs/stage1-' + bench + '.md` (also archived).',
               '- Identify hot functions from this run and explain their algorithms/data structures.',
               '- Separate observed cost from a proposed cause; no FPU-bound or memory-bound claim follows from a function name alone.',
-              '- Use clean release timings for any later optimization comparison. This run implements no optimization.', '']
+              '- Use fresh unprofiled debug timings for both variants in any later optimization comparison. This run implements no optimization.', '']
     (dest / 'README.md').write_text('\n'.join(lines))
 
 
 def write_view(out, status):
-    guide = status.get('guide_debug_reference', {})
-    guide_status = read_json(stage_path(guide) / 'guide-reference-status.json') if stage_path(guide) else {}
     for bench, record in status['benchmarks'].items():
-        benchmark_view(out, bench, record, guide_status.get('worker', {}).get('native', {}).get(bench, {}))
+        benchmark_view(out, bench, record)
     copy_artifact(status.get('framework_reference', {}), 'pyperformance.json', out / 'framework.json')
     lines = ['# Start here — stages 1–3', '',
              '**Required collection: ' + ('complete' if status['automated_collection_complete'] else 'INCOMPLETE') + '.** '
              'Written interpretation and human stack review remain required.', '',
-             'Literal guide collection: **' + ('complete' if status['literal_guide_collection_complete'] else 'incomplete/deferred') + '**.', '',
+             'Guide collection: **' + ('complete' if status['literal_guide_collection_complete'] else 'incomplete') + '**. '
+             'All measurements use debug Python (Py_DEBUG=1).', '',
              '| Open | Purpose |', '|---|---|']
     for bench in status['benchmarks']:
         lines.append(f'| [{bench}/README.md]({bench}/README.md) | Timing, top functions, counter validity, graphs and interpretation tasks |')
     lines += ['| [summary.json](summary.json) | Machine-readable status of every attempted stage |',
-              '| framework.json, if present | Genuine release pyperformance reference |',
+              '| framework.json, if present | Genuine debug pyperformance reference |',
               '| evidence.zip | Full recordings, logs, commands, source snapshots and toolkit, with checksums |', '',
               'Only files from this new run are compacted. Previous results are untouched. '
               'To inspect raw evidence, extract evidence.zip into this run directory; it restores `details/`. '
@@ -185,8 +178,6 @@ def write_view(out, status):
         lines += ['- **' + name + '**: ' + short_log(item).replace('\n', ' ')[:1500]]
     if not status.get('required_missing'):
         lines += ['No required collection failures in the selected mode.']
-    if status.get('release_only'):
-        lines += ['', '`--release-only` explicitly deferred the guide debug interpreter. It does not certify literal guide compliance.']
     lines += ['', 'If perf failed: check the archived gate-probe logs first. Missing perf or permission errors require fixing the VM setup; '
               'do not change interpreter or silently substitute a py-spy graph. Zero hardware cycles may be a virtual-PMU limitation; '
               'the software-clock perf graph can still work.', '', '## Supplementary limitations', '']

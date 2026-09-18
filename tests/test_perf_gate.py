@@ -5,11 +5,14 @@ import json
 import os
 from pathlib import Path
 import select
+import sys
+import sysconfig
 import tempfile
 import threading
 import unittest
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 SPEC = importlib.util.spec_from_file_location(
     "tested_workload", Path(__file__).resolve().parents[1] / "tools" / "workload.py"
 )
@@ -154,6 +157,8 @@ class PerfGateTests(unittest.TestCase):
         self.assertIsNone(gate.control_fd)
         self.assertIsNone(gate.ack_fd)
 
+    @unittest.skipUnless(sysconfig.get_config_var('Py_DEBUG'),
+                         'Workload driver requires debug Python')
     def test_full_driver_receipt_with_nul_ack(self):
         peer = FakePerf(self.temp.name, [[b"ack\n\0"], [b"ack\n\0"]])
         self.addCleanup(peer.close)

@@ -68,7 +68,7 @@ class CompactEvidenceTests(unittest.TestCase):
             fixture = out/'details'/'fixture'
             fixture.mkdir()
             (fixture/'python.svg').write_text('<svg/>')
-            args = argparse.Namespace(benchmark='nbody', release_only=True,
+            args = argparse.Namespace(benchmark='nbody',
                                       skip_python_sampling=True, skip_optional_counters=True)
             with patch.object(p, 'RUN_ROOT', out/'details'), \
                  patch.object(p, 'gate_probe', return_value=(fixture, False)), \
@@ -79,7 +79,7 @@ class CompactEvidenceTests(unittest.TestCase):
                 status = course.collect_stages(p.config(), args, out)
             native.assert_not_called()
             self.assertFalse(status['automated_collection_complete'])
-            self.assertIn('nbody release perf profile', status['required_missing'])
+            self.assertIn('nbody debug perf profile', status['required_missing'])
             self.assertFalse(status['coursework_complete'])
 
 

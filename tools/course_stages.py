@@ -8,7 +8,7 @@ import shutil
 import sys
 
 import pipeline as p
-from course_reference import run_guide_reference, run_reference, selected_benchmarks
+from course_reference import run_reference, selected_benchmarks
 from friendly_results import write_view, archive_evidence, portable_status
 
 
@@ -35,11 +35,11 @@ def native_evidence(path):
 
 def collect_stages(c, args, out):
     benches = selected_benchmarks(args.benchmark)
-    status = {"schema_version": 1, "benchmarks": {}, "required_missing": [], "optional_warnings": [],
-              "release_only": args.release_only, "automated_collection_complete": False,
+    status = {"schema_version": 2, "benchmarks": {}, "required_missing": [], "optional_warnings": [],
+              "interpreter_kind": "debug", "automated_collection_complete": False,
               "coursework_complete": False, "manual_review": "pending",
               "scope": "Stages 1-3 baseline only: code understanding, runtime and profiling/bottleneck evidence. No optimization.",
-              "guide_interpretation": "Default includes separately labelled python3-dbg evidence; release-only explicitly defers that guide requirement.",
+              "guide_interpretation": "All measurements use the same debug Python; the main framework and native profiles cover the guide interpreter requirement.",
               "manual_tasks": ["Review both stage-1 explanations and cite the selected frozen sources.",
                                "Record the actual VM/host settings in ENVIRONMENT.md.",
                                "Inspect native graphs, self tables, sample loss and stack-health warnings.",
@@ -66,7 +66,7 @@ def collect_stages(c, args, out):
         return record
 
     status["gate_probe"] = collect("perf enable/disable smoke test", lambda: p.gate_probe(c))
-    status["framework_reference"] = collect("release pyperformance framework reference",
+    status["framework_reference"] = collect("debug pyperformance framework reference",
                                            lambda: run_reference(c, args.benchmark))
     for bench in benches:
         record = {}
@@ -77,20 +77,20 @@ def collect_stages(c, args, out):
             record["source_review"]["sha256"] = p.digest(doc)
         else:
             status["required_missing"].append(bench + " source-understanding document")
-        record["timing"] = collect(bench + " release timing", lambda b=bench: p.timing(b, "baseline", c))
+        record["timing"] = collect(bench + " debug timing", lambda b=bench: p.timing(b, "baseline", c))
         # Required native work is attempted independently of every supplementary
         # sampler/counter stage. A py-spy SVG cannot satisfy this requirement.
         if status["gate_probe"]["available"]:
-            record["native"] = collect(bench + " release perf profile", lambda b=bench: p.native(b, "baseline", c))
+            record["native"] = collect(bench + " debug perf profile", lambda b=bench: p.native(b, "baseline", c))
         else:
             record["native"] = {"available": False, "skipped": True, "reason": "Perf gate probe failed; repair it before a long recording."}
-            status["required_missing"].append(bench + " release perf profile")
-            status.setdefault("actions", {})[bench + " release perf profile"] = record["native"]
+            status["required_missing"].append(bench + " debug perf profile")
+            status.setdefault("actions", {})[bench + " debug perf profile"] = record["native"]
         if record["native"].get("path"):
             evidence = native_evidence(Path(record["native"]["path"]))
             record["native"].update(evidence)
-            if not evidence["available"] and bench + " release perf profile" not in status["required_missing"]:
-                status["required_missing"].append(bench + " release perf profile")
+            if not evidence["available"] and bench + " debug perf profile" not in status["required_missing"]:
+                status["required_missing"].append(bench + " debug perf profile")
         record["python_calls"] = collect(bench + " cProfile (supplementary)", lambda b=bench: p.python_profile(b, "baseline", c), False)
         if not args.skip_python_sampling and c["pyspy"]["enabled"]:
             record["python_sampling"] = collect(bench + " py-spy (supplementary)", lambda b=bench: p.pyspy_profile(b, "baseline", c), False)
@@ -101,25 +101,15 @@ def collect_stages(c, args, out):
         else:
             record["counters"] = {"available": False, "skipped": True,
                                    "reason": "Explicitly skipped or gate probe failed. IPC/top-down are not substituted."}
-    if not args.release_only and status["gate_probe"]["available"]:
-        status["guide_debug_reference"] = collect("separate guide python3-dbg reference",
-                                                  lambda: run_guide_reference(c, args.benchmark))
-    elif not args.release_only:
-        status["guide_debug_reference"] = {"available": False, "skipped": True,
-                                           "reason": "Perf gate probe failed; guide collection deferred until repaired."}
-        status["required_missing"].append("separate guide python3-dbg reference")
-        status.setdefault("actions", {})["separate guide python3-dbg reference"] = status["guide_debug_reference"]
-    else:
-        status["guide_debug_reference"] = {"available": False, "explicitly_deferred": True,
-                                            "reason": "--release-only chosen; this is not full literal guide compliance."}
     status["automated_collection_complete"] = not status["required_missing"]
-    status["literal_guide_collection_complete"] = status["automated_collection_complete"] and not args.release_only
+    status["literal_guide_collection_complete"] = status["automated_collection_complete"]
     # A machine cannot certify the student's interpretation or stack ancestry.
     status["coursework_complete"] = False
     return status
 
 
 def run(c, args):
+    p.require_debug_python()
     out = p.new_run("run")
     details = out / "details"
     details.mkdir()
@@ -159,7 +149,6 @@ def run(c, args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark", choices=p.BENCHMARKS, help="Default: collect both benchmarks")
-    parser.add_argument("--release-only", action="store_true", help="Explicitly defer literal guide python3-dbg reference; not full guide compliance")
     parser.add_argument("--skip-optional-counters", action="store_true", help="Skip supplementary PMU stat passes; native perf remains required")
     parser.add_argument("--skip-python-sampling", action="store_true", help="Skip supplementary py-spy; native perf remains required")
     parser.add_argument("--keep-details", action="store_true", help="Keep expanded raw evidence as well as the verified evidence ZIP")

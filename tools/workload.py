@@ -27,6 +27,8 @@ import time
 import types
 import uuid
 
+from python_environment import require_debug_python
+
 
 def source_tree_hash(path):
     """Hash source, sibling helpers, and data with the pipeline's canonical order."""
@@ -214,6 +216,7 @@ def run_measured_calls(call, calls, result):
 
 
 def main(argv=None):
+    require_debug_python()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark", required=True, choices=("nbody", "raytrace"))
     parser.add_argument("--source", required=True, type=Path)

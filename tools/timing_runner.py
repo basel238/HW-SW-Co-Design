@@ -9,9 +9,8 @@ timer boundaries (including nbody's untimed momentum offset).
 import hashlib
 from pathlib import Path
 
-import pyperf
-
 from workload import load_benchmark, source_directory, source_tree_hash
+from python_environment import require_debug_python
 
 
 def add_cmdline_args(command, args):
@@ -23,6 +22,9 @@ def add_cmdline_args(command, args):
 
 
 def main():
+    require_debug_python()
+    import pyperf
+
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     parser = runner.argparser
     parser.add_argument("--benchmark", required=True, choices=("nbody", "raytrace"))

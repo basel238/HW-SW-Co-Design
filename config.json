@@ -5,7 +5,7 @@
   "stat_repeats": 3,
   "compare_rounds": 2,
   "mpki": true,
-  "pyspy": {"enabled": true, "rate": 250},
+  "pyspy": {"enabled": false, "rate": 250},
   "sample_frequency": 499,
   "unwind": "dwarf,16384",
   "affinity": null,

@@ -61,7 +61,7 @@ bash scripts/13_course_stages.sh
 
 If the VM is on another branch, switch to the intended branch first, after saving any tracked changes. If you pushed a feature branch, pull that same branch instead of main. `git pull --ff-only origin main` **does not switch branches**. If fast-forward is refused, inspect the divergent commits; do not use reset/force commands to discard VM work.
 
-The setup refreshes dependencies in the VM's own environments. Never copy the Mac virtual environment to Linux. The main command prints the new run README path. Old failed runs remain historical evidence; this update does not reclassify them as successful.
+Setup now requires one debug `.venv` (`Py_DEBUG=1`) for all measurements and defaults to `python3-dbg`. If the VM still has a release `.venv`, setup refuses it without modifying dependencies. Follow **QUICKSTART.md** to move the old environment aside and create the debug one, then rerun the course command. The old `.venv-guide`, benchmark edits and results remain untouched. Never copy a Mac virtual environment to Linux. Collect fresh debug baselines and candidates; historical release timings cannot support new comparisons. The main command prints the new run README path. Old failed runs remain historical evidence; this update does not reclassify them as successful.
 
 ## 4. Share results for analysis
 

@@ -2,7 +2,7 @@
 
 For an existing v4/v4.1 repository, start with **UPDATING.md**: safe replacement, local Git, GitHub and the VM. Install at the repository root; do not nest this package inside run_scripts/. **STAGES_1_3.md** explains the compact workflow and homework compliance. MIGRATION.md applies only to the original, unmigrated layout.
 
-This package replaces the original setup, baseline, counters, profiling and comparison pipeline. It supports release CPython 3.10 or newer on Linux. For continuity, start in the same Ubuntu VM with the same release Python version used for your previous baseline.
+This package replaces the original setup, baseline, counters, profiling and comparison pipeline. All measurements require debug CPython 3.10 or newer on Linux (`Py_DEBUG=1`), without `-O`/`-OO`. One debug environment runs pyperformance, unprofiled timing, perf profiling, counters, Python profiling and optimization comparisons.
 
 **Collect fresh baselines with this package.** The old JSONs remain historical evidence; their source identity and measurement conditions cannot be assumed identical to this experiment.
 
@@ -12,25 +12,27 @@ The benchmark functions are unchanged copies from pyperformance 1.14.0. The timi
 
 From the updated repository (or extracted project-repo-v4.2 directory), inside the Ubuntu VM:
 
-    # Pick the same release interpreter as before; Python 3.12 is not required.
-    PYTHON_BIN=/usr/bin/python3 bash scripts/00_setup.sh
+    # Use a debug build; Python 3.12 is not required.
+    PYTHON_BIN=/usr/bin/python3-dbg bash scripts/00_setup.sh
 
     # Both benchmarks, required perf graphs and genuine pyperformance reference.
     bash scripts/13_course_stages.sh
 
 No activation is needed. Every wrapper resolves paths relative to the package and uses its .venv/bin/python. You can invoke a wrapper from another working directory.
 
+Setup defaults to `python3-dbg` and validates `Py_DEBUG` before installing dependencies. If `.venv` already contains release Python, setup stops without changing it. Move that environment aside as shown in [QUICKSTART.md](QUICKSTART.md), then rerun setup. An old `.venv-guide` is left untouched and is no longer used. Historical release results remain intact; collect fresh debug baselines and candidates, and never compare them against release timings.
+
 The setup installs pinned Python dependencies and py-spy 0.4.2 into this local venv. Set INSTALL_PYSPY=0 to skip its optional installation; set pyspy.enabled=false in config.json to omit its stage from the full pipeline. It does not install system packages, change sysctls, disable the watchdog, recreate your old environment, or alter existing project files. FlameGraph tools are already included at a recorded commit.
 
 If perf is missing, install the package appropriate to the **guest kernel**:
 
-    sudo apt install python3-venv linux-tools-common "linux-tools-$(uname -r)" perl
+    sudo apt install python3-dbg python3-venv linux-tools-common "linux-tools-$(uname -r)" perl
 
 Package availability depends on the Ubuntu image/kernel repositories. Check perf --version afterwards. A restricted perf policy may still prevent profiling; see the saved errors and the course's machine policy. Do not run all setup/benchmarks as root merely to hide a permissions problem.
 
 Each course run creates **one** clearly named results directory, with a start-here README and one folder per benchmark. Compact summaries show runtime, top functions, counter validity and graph links. Raw data, full logs and source snapshots go into one verified evidence.zip. Use --keep-details for expanded diagnostics. Existing results are untouched. Exit 3 means required collection is incomplete; optional limitations remain explicit. Collection success never certifies written interpretation.
 
-The release interpreter is used consistently for main timing and profiling. A separate python3-dbg framework/profile reference covers the guide's interpreter choice without mixing debug costs into release measurements. --release-only explicitly defers that reference. A py-spy graph never substitutes for the required perf graph. See STAGES_1_3.md for the requirement matrix and ACK repair.
+The main debug measurements cover the guide's interpreter choice. There is no duplicate guide-debug stage, `guide-perf.svg`, `--guide` option or `--release-only` mode. A py-spy graph never substitutes for the required perf graph. See STAGES_1_3.md for the requirement matrix and ACK repair.
 
 ## What is included
 
@@ -40,7 +42,7 @@ The release interpreter is used consistently for main timing and profiling. A se
 | results/ | One compact folder per course run; full evidence ZIP inside |
 | hw/ | Hardware source location; implementation not supplied |
 | archive/ | Historical files preserved by migration |
-| scripts/00_setup.sh | One explicit release interpreter and pinned Python dependencies |
+| scripts/00_setup.sh | One validated debug interpreter and pinned Python dependencies |
 | scripts/01_baseline.sh BENCH [VARIANT] | Unprofiled multi-worker timing; VARIANT defaults to baseline |
 | scripts/02_perf_stat.sh BENCH [VARIANT] | Gated fixed-work counters, separate event groups and raw repeats |
 | scripts/03_perf_record_flame.sh BENCH [VARIANT] | Native perf recording, readable Self table, full call graph, folded stacks, SVG and stack review |
@@ -182,7 +184,7 @@ Correctness checks:
 - Evidence is tied to both entry-file and full source-tree hashes. A stale successful check cannot validate different code.
 - These finite regression checks do not prove all possible inputs or semantics. A legitimate larger numerical change may require a separately justified correctness policy; no tolerance is silently loosened.
 
-The comparison validates interpreter/build, dependencies, machine metadata, benchmark/workload settings, timing configuration and measurement-tool hashes. It retains pyperf comparison output but does not use a successful tool exit status as evidence of speedup.
+The comparison requires debug evidence for both variants and validates interpreter/build, dependencies, machine metadata, benchmark/workload settings, timing configuration and measurement-tool hashes. Results apply to the selected debug build; they do not establish release-build speedup. It retains pyperf comparison output but does not use a successful tool exit status as evidence of speedup.
 
 For every round, it reports:
 

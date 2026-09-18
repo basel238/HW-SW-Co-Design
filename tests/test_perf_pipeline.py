@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import sysconfig
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -124,6 +125,7 @@ raise SystemExit(2)
                      "Requires POSIX FIFOs and Perl for the actual renderer")
 @unittest.skipUnless(importlib.util.find_spec("pyperf"),
                      "Run with .venv/bin/python; unchanged benchmarks import pyperf")
+@unittest.skipUnless(sysconfig.get_config_var("Py_DEBUG"), "Actual measurements require debug Python")
 class PerfPipelineIntegration(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

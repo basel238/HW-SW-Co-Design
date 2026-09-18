@@ -1,4 +1,11 @@
-# v4.2 — reliable course collection and compact results
+# Debug-only measurement update
+
+- All framework runs, timing, perf profiling, counters, Python profiling and optimization comparisons use debug CPython (`Py_DEBUG=1`) without `-O`/`-OO`.
+- Setup defaults to `python3-dbg`, validates the environment before installing dependencies and preserves existing release environments for an explicit move aside. Cached pyperformance workers are checked before measurement; comparisons reject release evidence.
+- Removed the duplicate guide-debug stage, guide worker, `guide-perf.svg`, `--guide` and `--release-only`. The main debug run covers the guide interpreter requirement.
+- Kept compact summaries, verified evidence archives and the Linux 5.15 newline/NUL ACK fix. Existing results, configuration and benchmark edits are preserved; new comparisons require fresh debug measurements.
+
+# v4.2 — reliable course collection and compact results (historical)
 
 - Fixed newline/NUL perf ACK framing; retained strict timeouts, token checks, complete source-matched workloads and enable/disable acknowledgement requirements. Added a short gated preflight.
 - Genuine pinned pyperformance references with validated worker identity and frozen sources. Guide python3-dbg reference runs remain separate from release measurements.

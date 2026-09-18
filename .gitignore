@@ -1,4 +1,5 @@
 .venv/
+.venv-before-debug-*/
 .venv-guide/
 .course-cache/
 __pycache__/

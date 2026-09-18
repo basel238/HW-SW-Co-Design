@@ -20,6 +20,7 @@ import uuid
 from measurement_extras import (write_counter_summary, source_diff, probe_status,
                                 jit_perf_version_supported)
 from profile_evidence import assess_python_capture
+from python_environment import require_debug_python
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
@@ -150,10 +151,7 @@ def machine():
 
 
 def preflight():
-    if sys.version_info < (3, 10) or platform.python_implementation() != "CPython":
-        raise RuntimeError("This package targets CPython 3.10+ on Linux.")
-    if sysconfig.get_config_var("Py_DEBUG") or sys.flags.optimize:
-        raise RuntimeError("Use release Python without -O for consistent benchmark semantics.")
+    require_debug_python()
     if importlib.metadata.version("pyperf") != "2.10.0":
         raise RuntimeError("Install the pinned requirements with 00_setup.sh.")
     sources = json.loads((ROOT / "SOURCES.json").read_text())
@@ -169,6 +167,7 @@ def preflight():
 
 
 def new_run(label):
+    require_debug_python()
     if RUN_ROOT is not None:
         path = Path(RUN_ROOT) / label
         path.mkdir(parents=True, exist_ok=False)
@@ -466,8 +465,8 @@ def stat(bench, variant, c):
     return out, status["all_requested_events_usable"]
 
 
-def native(bench, variant, c, python_mode=None, run_label_prefix=""):
-    out = new_run(run_label_prefix + bench + "-" + variant + ("-python-perf-" + python_mode if python_mode else "-native"))
+def native(bench, variant, c, python_mode=None):
+    out = new_run(bench + "-" + variant + ("-python-perf-" + python_mode if python_mode else "-native"))
     source = snapshot(bench, variant, out, c)
     command(["perf", "version", "--build-options"], out, "perf-build-options", timeout=15)
     flags, extra, unwind = [], [], c["unwind"]

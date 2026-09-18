@@ -1,4 +1,4 @@
-> Historical review before integration. The selected additions are now implemented in v3; see CHANGELOG.md.
+> Historical review before integration. The selected additions were implemented in v3; see CHANGELOG.md. References below to a release environment describe that earlier policy. Current measurements and optimization comparisons use debug Python exclusively; see README.md.
 
 # Review of the alternative updated measurement scripts
 

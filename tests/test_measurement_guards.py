@@ -112,7 +112,7 @@ class MeasurementGuards(unittest.TestCase):
                     else:
                         self.assertEqual(argv[argv.index('--format')+1], 'raw')
                         raw = Path(argv[argv.index('--output')+1])
-                        raw.write_text('module;run_measured_calls (' + str(root/'tools/workload.py') + ':200);advance (fixture.py:1) 600\nmodule;offset (fixture.py:2) 400\n')
+                        raw.write_text('module;run_measured_calls (' + str((root/'tools/workload.py').resolve()) + ':200);advance (fixture.py:1) 600\nmodule;offset (fixture.py:2) 400\n')
                         source = directory/'source/run_benchmark.py'
                         receipt = dict(status='ok', benchmark='nbody', calls=settings['nbody']['profile_calls'],
                                        completed_calls=settings['nbody']['profile_calls'], warmups=1, completed_warmups=1,
@@ -123,6 +123,7 @@ class MeasurementGuards(unittest.TestCase):
                     return 0
                 return real_command(argv, directory, name, *args, **kwargs)
             with patch.object(p, 'ROOT', root), patch.object(p, 'TOOLS', root/'tools'), \
+                 patch.object(p, 'require_debug_python'), \
                  patch.object(p, 'pyspy_executable', return_value=binary), patch.object(p, 'command', simulate):
                 out, ok = p.pyspy_profile('nbody','baseline',settings)
             self.assertTrue(ok)
