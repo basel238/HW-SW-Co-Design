@@ -1,0 +1,5 @@
+Events disabled
+Events enabled
+Events disabled
+Events disabled
+RuntimeError: Unexpected perf acknowledgement: b'\x00ack'; Counter disable cleanup: RuntimeError: Unexpected perf acknowledgement: b'\x00ack'

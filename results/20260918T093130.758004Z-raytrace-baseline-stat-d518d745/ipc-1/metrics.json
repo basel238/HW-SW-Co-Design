@@ -1,0 +1,35 @@
+{
+  "events": {
+    "cycles:u": {
+      "count": 18989293516.0,
+      "unit": "",
+      "raw_count": "18989293516",
+      "counter_runtime": 7986800972.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "instructions:u": {
+      "count": 50759345214.0,
+      "unit": "",
+      "raw_count": "50759345214",
+      "counter_runtime": 7986800972.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    }
+  },
+  "measurement_completed": false,
+  "any_usable_event": false,
+  "all_emitted_events_usable": false,
+  "validation": "nonzero/scheduling sanity only; PMU semantics still need verification",
+  "ipc": null,
+  "ratio_unavailable_reason": "collection failed",
+  "cpi": null,
+  "group": "ipc",
+  "repeat": 1,
+  "calls": 10,
+  "all_requested_events_usable": false
+}

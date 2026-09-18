@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "-m",
+    "pyperf",
+    "dump",
+    "/root/HW-SW-Co-Design/results/20260918T092933.768665Z-raytrace-baseline-timing-8db6367f/timing.json"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

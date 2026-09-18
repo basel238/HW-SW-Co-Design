@@ -1,0 +1,10 @@
+{
+  "executable": "/root/HW-SW-Co-Design/.venv/bin/python",
+  "real_executable": "/usr/bin/python3.10",
+  "executable_sha256": "a2f33a6e006989270f4340528eb61f8f97366e00a5d1b602ac8672ea44fc56ae",
+  "version": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "py_debug": false,
+  "compiler": "GCC 11.4.0",
+  "cflags": "-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g       -fstack-protector-strong -Wformat -Werror=format-security  -g -fwrapv -O2   ",
+  "config_args": "'--enable-shared' '--prefix=/usr' '--libdir=/usr/lib/x86_64-linux-gnu' '--enable-ipv6' '--enable-loadable-sqlite-extensions' '--with-dbmliborder=bdb:gdbm' '--with-computed-gotos' '--without-ensurepip' '--with-system-expat' '--with-dtrace' '--with-system-libmpdec' '--with-wheel-pkg-dir=/usr/share/python-wheels/' 'MKDIR_P=/bin/mkdir -p' '--with-system-ffi' 'CC=x86_64-linux-gnu-gcc' 'CFLAGS=-g       -fstack-protector-strong -Wformat -Werror=format-security ' 'LDFLAGS=-Wl,-Bsymbolic-functions      -g -fwrapv -O2   ' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'"
+}

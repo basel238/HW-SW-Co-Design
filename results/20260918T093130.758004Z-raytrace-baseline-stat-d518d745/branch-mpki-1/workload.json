@@ -1,0 +1,30 @@
+{
+  "status": "error",
+  "benchmark": "raytrace",
+  "source": "/root/HW-SW-Co-Design/results/20260918T093130.758004Z-raytrace-baseline-stat-d518d745/source/run_benchmark.py",
+  "calls": 10,
+  "completed_calls": 10,
+  "warmups": 1,
+  "completed_warmups": 1,
+  "loops_per_call": 1,
+  "parameters": {
+    "width": 100,
+    "height": 100
+  },
+  "wall_seconds": 8.05313761799971,
+  "process_cpu_seconds": 8.041796211000001,
+  "reported_benchmark_seconds": null,
+  "roi_gated": true,
+  "cprofile": null,
+  "nbody_state_policy": "one imported module; state continues across warmups and measured calls; bench_nbody offsets momentum on every call",
+  "measurement_scope": "fixed benchmark calls plus driver loop/timer overhead; imports and warmups excluded from gated counters; FIFO boundary cost remains",
+  "errors": [
+    "RuntimeError: Unexpected perf acknowledgement: b'\\x00ack'",
+    "Counter disable cleanup: RuntimeError: Unexpected perf acknowledgement: b'\\x00ack'"
+  ],
+  "source_sha256": "88ef4d9060d8e8f6ce40f376477aaf89cc808fa44813225a3071a05a1467f017",
+  "source_tree_sha256": "12193dfa19c19257f56873656a41f658f96197550d97061322ea809b27a0fecc",
+  "interpreter": "/root/HW-SW-Co-Design/.venv/bin/python",
+  "python_version": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "pid": 1270
+}

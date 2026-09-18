@@ -1,0 +1,12 @@
+{
+  "available": true,
+  "sampling_hz": 250,
+  "required_version": "0.4.2",
+  "scope": "Whole fixed-work driver process: imports, in-process warmup, benchmark calls and receipt writing. NOT perf-gated.",
+  "measurement": "Separate statistical Python profile; not timing or a PMU measurement.",
+  "sample_policy": "py-spy defaults: active-thread heuristic, no GIL-only filter, no native extension unwinding",
+  "unavailable_reason": null,
+  "version": "py-spy 0.4.2",
+  "sample_count": 2660,
+  "sample_count_warning": null
+}

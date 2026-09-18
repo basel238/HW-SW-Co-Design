@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "/root/HW-SW-Co-Design/tools/timing_runner.py",
+    "--benchmark",
+    "raytrace",
+    "--source",
+    "/root/HW-SW-Co-Design/results/20260918T092933.768665Z-raytrace-baseline-timing-8db6367f/source/run_benchmark.py",
+    "--output",
+    "/root/HW-SW-Co-Design/results/20260918T092933.768665Z-raytrace-baseline-timing-8db6367f/timing.json",
+    "--processes",
+    "20",
+    "--values",
+    "3",
+    "--warmups",
+    "1",
+    "--loops",
+    "1",
+    "--iterations",
+    "20000",
+    "--width",
+    "100",
+    "--height",
+    "100"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

@@ -1,0 +1,34 @@
+{
+  "events": {
+    "cache-references:u": {
+      "count": 34748741.0,
+      "unit": "",
+      "raw_count": "34748741",
+      "counter_runtime": 7979767268.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "cache-misses:u": {
+      "count": 13702.0,
+      "unit": "",
+      "raw_count": "13702",
+      "counter_runtime": 7979767268.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    }
+  },
+  "measurement_completed": false,
+  "any_usable_event": false,
+  "all_emitted_events_usable": false,
+  "validation": "nonzero/scheduling sanity only; PMU semantics still need verification",
+  "generic_cache_miss_percent": null,
+  "ratio_unavailable_reason": "collection failed",
+  "group": "cache",
+  "repeat": 1,
+  "calls": 10,
+  "all_requested_events_usable": false
+}

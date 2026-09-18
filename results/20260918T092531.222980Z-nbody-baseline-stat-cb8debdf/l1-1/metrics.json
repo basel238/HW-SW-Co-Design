@@ -1,0 +1,34 @@
+{
+  "events": {
+    "L1-dcache-loads": {
+      "count": 21339813635.0,
+      "unit": "",
+      "raw_count": "21339813635",
+      "counter_runtime": 9210572460.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "L1-dcache-load-misses": {
+      "count": 6009033.0,
+      "unit": "",
+      "raw_count": "6009033",
+      "counter_runtime": 9210572460.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    }
+  },
+  "measurement_completed": false,
+  "any_usable_event": false,
+  "all_emitted_events_usable": false,
+  "validation": "nonzero/scheduling sanity only; PMU semantics still need verification",
+  "l1_miss_percent": null,
+  "ratio_unavailable_reason": "collection failed",
+  "group": "l1",
+  "repeat": 1,
+  "calls": 40,
+  "all_requested_events_usable": false
+}

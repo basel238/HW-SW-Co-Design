@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "perl",
+    "/root/HW-SW-Co-Design/vendor/FlameGraph/flamegraph.pl",
+    "--countname",
+    "samples",
+    "--title",
+    "raytrace Python sampling (includes startup/warmup)",
+    "/root/HW-SW-Co-Design/results/20260918T093118.903023Z-raytrace-baseline-pyspy-70d288a6/python-sampled.folded"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

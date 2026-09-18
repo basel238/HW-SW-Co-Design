@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/py-spy",
+    "record",
+    "--rate",
+    "250",
+    "--format",
+    "raw",
+    "--output",
+    "/root/HW-SW-Co-Design/results/20260918T092520.221581Z-nbody-baseline-pyspy-770916f5/python-sampled.folded",
+    "--",
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "/root/HW-SW-Co-Design/tools/workload.py",
+    "--benchmark",
+    "nbody",
+    "--source",
+    "/root/HW-SW-Co-Design/results/20260918T092520.221581Z-nbody-baseline-pyspy-770916f5/source/run_benchmark.py",
+    "--calls",
+    "40",
+    "--warmups",
+    "1",
+    "--iterations",
+    "20000",
+    "--width",
+    "100",
+    "--height",
+    "100",
+    "--receipt",
+    "/root/HW-SW-Co-Design/results/20260918T092520.221581Z-nbody-baseline-pyspy-770916f5/workload.json"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

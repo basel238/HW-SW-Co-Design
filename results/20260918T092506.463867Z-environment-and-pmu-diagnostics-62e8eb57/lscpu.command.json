@@ -1,0 +1,7 @@
+{
+  "argv": [
+    "lscpu"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

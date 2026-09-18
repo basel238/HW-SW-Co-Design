@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "/root/HW-SW-Co-Design/tools/workload.py",
+    "--benchmark",
+    "raytrace",
+    "--source",
+    "/root/HW-SW-Co-Design/results/20260918T093041.328891Z-raytrace-baseline-python-7bf29a2f/source/run_benchmark.py",
+    "--calls",
+    "10",
+    "--warmups",
+    "1",
+    "--iterations",
+    "20000",
+    "--width",
+    "100",
+    "--height",
+    "100",
+    "--receipt",
+    "/root/HW-SW-Co-Design/results/20260918T093041.328891Z-raytrace-baseline-python-7bf29a2f/workload.json",
+    "--cprofile",
+    "/root/HW-SW-Co-Design/results/20260918T093041.328891Z-raytrace-baseline-python-7bf29a2f/python.pstats"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

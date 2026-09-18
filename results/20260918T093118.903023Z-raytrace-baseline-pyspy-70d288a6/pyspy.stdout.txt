@@ -1,0 +1,6 @@
+py-spy> Sampling process 250 times a second. Press Control-C to exit.
+
+
+py-spy> Stopped sampling because process exited
+py-spy> Wrote raw flamegraph data to '/root/HW-SW-Co-Design/results/20260918T093118.903023Z-raytrace-baseline-pyspy-70d288a6/python-sampled.folded'. Samples: 2660 Errors: 0
+py-spy> You can use the flamegraph.pl script from https://github.com/brendangregg/flamegraph to generate a SVG

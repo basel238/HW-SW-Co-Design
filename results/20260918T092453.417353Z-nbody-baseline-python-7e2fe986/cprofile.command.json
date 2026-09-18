@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "/root/HW-SW-Co-Design/tools/workload.py",
+    "--benchmark",
+    "nbody",
+    "--source",
+    "/root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py",
+    "--calls",
+    "40",
+    "--warmups",
+    "1",
+    "--iterations",
+    "20000",
+    "--width",
+    "100",
+    "--height",
+    "100",
+    "--receipt",
+    "/root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/workload.json",
+    "--cprofile",
+    "/root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/python.pstats"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

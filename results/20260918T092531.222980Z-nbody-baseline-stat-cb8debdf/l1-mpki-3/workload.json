@@ -1,0 +1,30 @@
+{
+  "status": "error",
+  "benchmark": "nbody",
+  "source": "/root/HW-SW-Co-Design/results/20260918T092531.222980Z-nbody-baseline-stat-cb8debdf/source/run_benchmark.py",
+  "calls": 40,
+  "completed_calls": 40,
+  "warmups": 1,
+  "completed_warmups": 1,
+  "loops_per_call": 1,
+  "parameters": {
+    "iterations": 20000,
+    "reference": "sun"
+  },
+  "wall_seconds": 9.335472682999807,
+  "process_cpu_seconds": 9.31825166,
+  "reported_benchmark_seconds": null,
+  "roi_gated": true,
+  "cprofile": null,
+  "nbody_state_policy": "one imported module; state continues across warmups and measured calls; bench_nbody offsets momentum on every call",
+  "measurement_scope": "fixed benchmark calls plus driver loop/timer overhead; imports and warmups excluded from gated counters; FIFO boundary cost remains",
+  "errors": [
+    "RuntimeError: Unexpected perf acknowledgement: b'\\x00ack'",
+    "Counter disable cleanup: RuntimeError: Unexpected perf acknowledgement: b'\\x00ack'"
+  ],
+  "source_sha256": "d1385e816d7cfea361b7915e2cf70138cd6b84f40df8bd5152638851f7bcac2b",
+  "source_tree_sha256": "9339f794518ef7c4c6ac488af69272b7df251673d0c2d7945c96f25773b4abdb",
+  "interpreter": "/root/HW-SW-Co-Design/.venv/bin/python",
+  "python_version": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "pid": 978
+}

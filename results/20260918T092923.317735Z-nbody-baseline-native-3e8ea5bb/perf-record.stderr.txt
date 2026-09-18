@@ -1,0 +1,12 @@
+Couldn't record kernel reference relocation symbol
+Symbol resolution may be skewed if relocation was used (e.g. kexec).
+Check /proc/kallsyms permission or run as root.
+perf_event__synthesize_bpf_events: failed to synthesize bpf images: No such file or directory
+Couldn't synthesize bpf events.
+Events disabled
+Events enabled
+Events disabled
+Events disabled
+RuntimeError: Unexpected perf acknowledgement: b'\x00ack'; Counter disable cleanup: RuntimeError: Unexpected perf acknowledgement: b'\x00ack'
+[ perf record: Woken up 299 times to write data ]
+[ perf record: Captured and wrote 73.834 MB /root/HW-SW-Co-Design/results/20260918T092923.317735Z-nbody-baseline-native-3e8ea5bb/perf.data (4651 samples) ]

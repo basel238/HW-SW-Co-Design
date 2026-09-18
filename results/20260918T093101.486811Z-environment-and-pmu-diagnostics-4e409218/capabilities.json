@@ -1,0 +1,74 @@
+{
+  "probes": [
+    {
+      "probe": "cycles-alone",
+      "selection": "cycles:u",
+      "returncode": 0,
+      "events": {
+        "cycles:u": {
+          "count": 7920929806.0,
+          "unit": "",
+          "raw_count": "7920929806",
+          "counter_runtime": 3329615462.0,
+          "running_percent": 100.0
+        }
+      },
+      "status": "count_and_scheduling_sanity_passed"
+    },
+    {
+      "probe": "instructions-alone",
+      "selection": "instructions:u",
+      "returncode": 0,
+      "events": {
+        "instructions:u": {
+          "count": 26987288121.0,
+          "unit": "",
+          "raw_count": "26987288121",
+          "counter_runtime": 3379143450.0,
+          "running_percent": 100.0
+        }
+      },
+      "status": "count_and_scheduling_sanity_passed"
+    },
+    {
+      "probe": "pair",
+      "selection": "{cycles:u,instructions:u}",
+      "returncode": 0,
+      "events": {
+        "cycles:u": {
+          "count": 9188299408.0,
+          "unit": "",
+          "raw_count": "9188299408",
+          "counter_runtime": 3869386432.0,
+          "running_percent": 100.0
+        },
+        "instructions:u": {
+          "count": 29087236774.0,
+          "unit": "",
+          "raw_count": "29087236774",
+          "counter_runtime": 3869386432.0,
+          "running_percent": 100.0
+        }
+      },
+      "status": "count_and_scheduling_sanity_passed"
+    },
+    {
+      "probe": "software",
+      "selection": "task-clock",
+      "returncode": 0,
+      "events": {
+        "task-clock": {
+          "count": 3184.61,
+          "unit": "msec",
+          "raw_count": "3184.61",
+          "counter_runtime": 3184610545.0,
+          "running_percent": 100.0
+        }
+      },
+      "status": "count_and_scheduling_sanity_passed"
+    }
+  ],
+  "have_perf_trampoline": false,
+  "frame_pointer_flag_present": false,
+  "note": "Probes include startup and test sanity, not PMU fidelity or benchmark bottlenecks. Build flags do not prove valid stacks."
+}

@@ -1,0 +1,35 @@
+Separate instrumented diagnostic: do not compare these times with unprofiled timings.
+
+CUMULATIVE TIME
+         361 function calls in 12.602 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       40    0.000    0.000   12.602    0.315 /root/HW-SW-Co-Design/tools/workload.py:96(<lambda>)
+       40    0.000    0.000   12.602    0.315 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:123(bench_nbody)
+       40   12.600    0.315   12.600    0.315 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:78(advance)
+       80    0.001    0.000    0.001    0.000 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:100(report_energy)
+       40    0.000    0.000    0.000    0.000 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:112(offset_momentum)
+       80    0.000    0.000    0.000    0.000 {built-in method time.perf_counter}
+       40    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+SELF TIME
+         361 function calls in 12.602 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       40   12.600    0.315   12.600    0.315 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:78(advance)
+       80    0.001    0.000    0.001    0.000 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:100(report_energy)
+       40    0.000    0.000   12.602    0.315 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:123(bench_nbody)
+       40    0.000    0.000    0.000    0.000 /root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986/source/run_benchmark.py:112(offset_momentum)
+       40    0.000    0.000   12.602    0.315 /root/HW-SW-Co-Design/tools/workload.py:96(<lambda>)
+       80    0.000    0.000    0.000    0.000 {built-in method time.perf_counter}
+       40    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+

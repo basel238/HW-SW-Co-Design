@@ -1,0 +1,7 @@
+{
+  "available": false,
+  "returncode": 1,
+  "scope": "target process; perf enable/disable handshake around fixed benchmark calls",
+  "note": "Tiny boundary/driver overhead remains; perf elapsed includes excluded setup.",
+  "completed_calls": 10
+}

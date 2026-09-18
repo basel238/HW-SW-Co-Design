@@ -1,0 +1,38 @@
+Metadata:
+- aslr: Full randomization
+- boot_time: 2026-09-18 08:48:43
+- cpu_config: idle:none
+- cpu_count: 1
+- cpu_freq: 0=2400 MHz
+- cpu_model_name: Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
+- hostname: ubuntu
+- loops: 1
+- measurement_method: exact source bench_time_func return value; unprofiled pyperf workers
+- name: nbody
+- perf_version: 2.10.0
+- platform: Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+- python_cflags: -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2
+- python_compiler: GCC 11.4.0
+- python_config_args: '--enable-shared' '--prefix=/usr' '--libdir=/usr/lib/x86_64-linux-gnu' '--enable-ipv6' '--enable-loadable-sqlite-extensions' '--with-dbmliborder=bdb:gdbm' '--with-computed-gotos' '--without-ensurepip' '--with-system-expat' '--with-dtrace' '--with-system-libmpdec' '--with-wheel-pkg-dir=/usr/share/python-wheels/' 'MKDIR_P=/bin/mkdir -p' '--with-system-ffi' 'CC=x86_64-linux-gnu-gcc' 'CFLAGS=-g -fstack-protector-strong -Wformat -Werror=format-security ' 'LDFLAGS=-Wl,-Bsymbolic-functions -g -fwrapv -O2 ' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'
+- python_executable: /root/HW-SW-Co-Design/.venv/bin/python
+- python_implementation: cpython
+- python_version: 3.10.12 (64-bit)
+- runnable_threads: 1
+- source_sha256: d1385e816d7cfea361b7915e2cf70138cd6b84f40df8bd5152638851f7bcac2b
+- source_tree_sha256: 9339f794518ef7c4c6ac488af69272b7df251673d0c2d7945c96f25773b4abdb
+- timer: clock_gettime(CLOCK_MONOTONIC), resolution: 1.00 ns
+- unit: second
+- workload_benchmark: nbody
+- workload_height: 100
+- workload_iterations: 20000
+- workload_reference: sun
+- workload_state_policy: one imported module per worker; state continues across benchmark calls
+- workload_width: 100
+
+WARNING: the benchmark result may be unstable
+* Not enough samples to get a stable result (95% certainly of less than 1% variation)
+
+Try to rerun the benchmark with more runs, values and/or loops.
+Run 'python -m pyperf system tune' command to reduce the system jitter.
+Use pyperf stats, pyperf dump and pyperf hist to analyze results.
+Use --quiet option to hide these warnings.

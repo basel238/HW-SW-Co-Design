@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/py-spy",
+    "--version"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

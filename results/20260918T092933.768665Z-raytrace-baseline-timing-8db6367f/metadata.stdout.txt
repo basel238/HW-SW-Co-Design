@@ -1,0 +1,32 @@
+Metadata:
+- aslr: Full randomization
+- boot_time: 2026-09-18 08:48:43
+- cpu_config: idle:none
+- cpu_count: 1
+- cpu_freq: 0=2400 MHz
+- cpu_model_name: Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
+- hostname: ubuntu
+- load_avg_1min: 1.00
+- loops: 1
+- measurement_method: exact source bench_time_func return value; unprofiled pyperf workers
+- mem_max_rss: 22.8 MiB
+- name: raytrace
+- perf_version: 2.10.0
+- platform: Linux-5.15.0-1106-kvm-x86_64-with-glibc2.35
+- python_cflags: -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2
+- python_compiler: GCC 11.4.0
+- python_config_args: '--enable-shared' '--prefix=/usr' '--libdir=/usr/lib/x86_64-linux-gnu' '--enable-ipv6' '--enable-loadable-sqlite-extensions' '--with-dbmliborder=bdb:gdbm' '--with-computed-gotos' '--without-ensurepip' '--with-system-expat' '--with-dtrace' '--with-system-libmpdec' '--with-wheel-pkg-dir=/usr/share/python-wheels/' 'MKDIR_P=/bin/mkdir -p' '--with-system-ffi' 'CC=x86_64-linux-gnu-gcc' 'CFLAGS=-g -fstack-protector-strong -Wformat -Werror=format-security ' 'LDFLAGS=-Wl,-Bsymbolic-functions -g -fwrapv -O2 ' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2'
+- python_executable: /root/HW-SW-Co-Design/.venv/bin/python
+- python_implementation: cpython
+- python_version: 3.10.12 (64-bit)
+- runnable_threads: 1
+- source_sha256: 88ef4d9060d8e8f6ce40f376477aaf89cc808fa44813225a3071a05a1467f017
+- source_tree_sha256: 12193dfa19c19257f56873656a41f658f96197550d97061322ea809b27a0fecc
+- timer: clock_gettime(CLOCK_MONOTONIC), resolution: 1.00 ns
+- unit: second
+- workload_benchmark: raytrace
+- workload_height: 100
+- workload_iterations: 20000
+- workload_reference: sun
+- workload_state_policy: one imported module per worker; state continues across benchmark calls
+- workload_width: 100

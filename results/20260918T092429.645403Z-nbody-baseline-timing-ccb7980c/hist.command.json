@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/root/HW-SW-Co-Design/.venv/bin/python",
+    "-m",
+    "pyperf",
+    "hist",
+    "/root/HW-SW-Co-Design/results/20260918T092429.645403Z-nbody-baseline-timing-ccb7980c/timing.json"
+  ],
+  "cwd": "/root/HW-SW-Co-Design",
+  "environment_policy": "remove PYTHON*/PYPERF*; LC_ALL=C"
+}

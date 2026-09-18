@@ -1,0 +1,62 @@
+{
+  "events": {
+    "task-clock": {
+      "count": 9169.92,
+      "unit": "msec",
+      "raw_count": "9169.92",
+      "counter_runtime": 9169923142.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "context-switches": {
+      "count": 249.0,
+      "unit": "",
+      "raw_count": "249",
+      "counter_runtime": 9169923142.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "cpu-migrations": {
+      "count": 0.0,
+      "unit": "",
+      "raw_count": "0",
+      "counter_runtime": 9169923142.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "minor-faults": {
+      "count": 1.0,
+      "unit": "",
+      "raw_count": "1",
+      "counter_runtime": 9169923142.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "major-faults": {
+      "count": 0.0,
+      "unit": "",
+      "raw_count": "0",
+      "counter_runtime": 9169923142.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    }
+  },
+  "measurement_completed": false,
+  "any_usable_event": false,
+  "all_emitted_events_usable": false,
+  "validation": "nonzero/scheduling sanity only; PMU semantics still need verification",
+  "group": "software",
+  "repeat": 2,
+  "calls": 40,
+  "all_requested_events_usable": false
+}

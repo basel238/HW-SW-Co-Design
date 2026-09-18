@@ -1,0 +1,13 @@
+{
+  "timing": "/root/HW-SW-Co-Design/results/20260918T092429.645403Z-nbody-baseline-timing-ccb7980c",
+  "stat": "/root/HW-SW-Co-Design/results/20260918T092531.222980Z-nbody-baseline-stat-cb8debdf",
+  "native": "/root/HW-SW-Co-Design/results/20260918T092923.317735Z-nbody-baseline-native-3e8ea5bb",
+  "python": "/root/HW-SW-Co-Design/results/20260918T092453.417353Z-nbody-baseline-python-7e2fe986",
+  "pyspy": "/root/HW-SW-Co-Design/results/20260918T092520.221581Z-nbody-baseline-pyspy-770916f5",
+  "capabilities": "/root/HW-SW-Co-Design/results/20260918T092506.463867Z-environment-and-pmu-diagnostics-62e8eb57",
+  "pyspy_enabled": true,
+  "pyspy_completed": false,
+  "perf_stat_all_requested_events_usable": false,
+  "perf_record_completed": false,
+  "profiling_errors": {}
+}

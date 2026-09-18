@@ -1,0 +1,34 @@
+{
+  "events": {
+    "instructions:u": {
+      "count": 50862865893.0,
+      "unit": "",
+      "raw_count": "50862865893",
+      "counter_runtime": 8020922228.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    },
+    "branch-misses:u": {
+      "count": 25481870.0,
+      "unit": "",
+      "raw_count": "25481870",
+      "counter_runtime": 8020922228.0,
+      "running_percent": 100.0,
+      "status": "collection_failed",
+      "usable": false,
+      "per_benchmark_call": null
+    }
+  },
+  "measurement_completed": false,
+  "any_usable_event": false,
+  "all_emitted_events_usable": false,
+  "validation": "nonzero/scheduling sanity only; PMU semantics still need verification",
+  "branch_mpki": null,
+  "ratio_unavailable_reason": "collection failed",
+  "group": "branch-mpki",
+  "repeat": 2,
+  "calls": 10,
+  "all_requested_events_usable": false
+}
