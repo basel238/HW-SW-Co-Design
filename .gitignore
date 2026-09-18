@@ -1,4 +1,6 @@
 .venv/
+.venv-guide/
+.course-cache/
 __pycache__/
 *.pyc
 results/**/perf.data*
@@ -8,5 +10,7 @@ results/**/source/
 results/**/*.ppm
 results/**/*.fifo
 results/**/jitted-*.so
-# Keep source, metadata, JSON, readable reports, folded stacks and SVGs.
-# Retain ignored raw traces locally or archive them separately before cleanup.
+results/**/evidence.zip
+# Keep project sources, metadata, JSON, readable reports, folded stacks and SVGs.
+# Per-run source snapshots and raw traces above are local: use tools/export_results.py
+# to preserve them outside Git before cleanup or sharing a complete evidence bundle.

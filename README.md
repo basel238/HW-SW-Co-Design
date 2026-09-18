@@ -1,6 +1,6 @@
-# Reproducible nbody / raytrace measurement scripts — v4 repository layout
+# nbody / raytrace — v4.2 profiling package
 
-For an existing repository, start with **MIGRATION.md**. Install at the repository root; do not nest this package inside run_scripts/. Historical scripts and results are preserved under archive/.
+For an existing v4/v4.1 repository, start with **UPDATING.md**: safe replacement, local Git, GitHub and the VM. Install at the repository root; do not nest this package inside run_scripts/. **STAGES_1_3.md** explains the compact workflow and homework compliance. MIGRATION.md applies only to the original, unmigrated layout.
 
 This package replaces the original setup, baseline, counters, profiling and comparison pipeline. It supports release CPython 3.10 or newer on Linux. For continuity, start in the same Ubuntu VM with the same release Python version used for your previous baseline.
 
@@ -10,17 +10,13 @@ The benchmark functions are unchanged copies from pyperformance 1.14.0. The timi
 
 ## Start here
 
-From the extracted project-repo-v4.1 directory, inside the Ubuntu VM:
+From the updated repository (or extracted project-repo-v4.2 directory), inside the Ubuntu VM:
 
     # Pick the same release interpreter as before; Python 3.12 is not required.
     PYTHON_BIN=/usr/bin/python3 bash scripts/00_setup.sh
 
-    # Read-only environment and PMU diagnostics; may log permission failures.
-    bash scripts/07_diagnose_pmu.sh
-
-    # Complete initial workflow for each benchmark.
-    bash script_nbody.sh
-    bash script_raytrace.sh
+    # Both benchmarks, required perf graphs and genuine pyperformance reference.
+    bash scripts/13_course_stages.sh
 
 No activation is needed. Every wrapper resolves paths relative to the package and uses its .venv/bin/python. You can invoke a wrapper from another working directory.
 
@@ -32,14 +28,16 @@ If perf is missing, install the package appropriate to the **guest kernel**:
 
 Package availability depends on the Ubuntu image/kernel repositories. Check perf --version afterwards. A restricted perf policy may still prevent profiling; see the saved errors and the course's machine policy. Do not run all setup/benchmarks as root merely to hide a permissions problem.
 
-Results go into new UTC-stamped directories under results/. A profiling-stage exit code 3 means some requested measurements were unavailable or failed sanity checks; clean timing and the Python profile are still retained. It is not a benchmark correctness failure.
+Each course run creates **one** clearly named results directory, with a start-here README and one folder per benchmark. Compact summaries show runtime, top functions, counter validity and graph links. Raw data, full logs and source snapshots go into one verified evidence.zip. Use --keep-details for expanded diagnostics. Existing results are untouched. Exit 3 means required collection is incomplete; optional limitations remain explicit. Collection success never certifies written interpretation.
+
+The release interpreter is used consistently for main timing and profiling. A separate python3-dbg framework/profile reference covers the guide's interpreter choice without mixing debug costs into release measurements. --release-only explicitly defers that reference. A py-spy graph never substitutes for the required perf graph. See STAGES_1_3.md for the requirement matrix and ACK repair.
 
 ## What is included
 
 | File | Purpose |
 |---|---|
 | MIGRATION.md / tools/migrate_repository.py | Archive the old layout, install at root, create a branch and local commit |
-| results/ | Fresh timestamped measurement output |
+| results/ | One compact folder per course run; full evidence ZIP inside |
 | hw/ | Hardware source location; implementation not supplied |
 | archive/ | Historical files preserved by migration |
 | scripts/00_setup.sh | One explicit release interpreter and pinned Python dependencies |
@@ -54,8 +52,12 @@ Results go into new UTC-stamped directories under results/. A profiling-stage ex
 | scripts/09_topdown_optional.sh BENCH [VARIANT] --cpu CPU | Explicitly requested, separately labeled system-wide top-down |
 | scripts/10_python_sampling.sh BENCH [VARIANT] | Independent py-spy raw samples and Python SVG |
 | scripts/11_python_perf.sh BENCH [VARIANT] --mode map or --mode jit | Opt-in Python/native trampoline profile after capability checks |
-| scripts/run_all.sh BENCH [VARIANT] | Timing, cProfile, capability probes, py-spy, counters and native profile |
-| script_nbody.sh / script_raytrace.sh | Per-benchmark initial-workflow wrappers |
+| scripts/12_course_reference.sh | Genuine pyperformance framework reference |
+| scripts/13_course_stages.sh | Compact first-three-stage workflow, both benchmarks by default |
+| scripts/14_export_results.sh | Export local results, including Git-ignored recordings |
+| scripts/15_perf_gate_probe.sh | Short stat/record enable/disable control test |
+| scripts/run_all.sh [BENCH [VARIANT]] | Compact course run; optimized variant retains advanced detailed diagnostics |
+| script_nbody.sh / script_raytrace.sh | Per-benchmark wrappers; default to stages 1–3 |
 | src/baseline/ | Upstream source locked by hashes; do not edit |
 | src/optimized/ | Initially identical candidate copies; edit here |
 | tools/ | Timing, fixed-work, correctness, comparison and profile-validation helpers |
@@ -132,7 +134,7 @@ The full workflow separately invokes pinned py-spy 0.4.2 at 250 Hz, even when pe
 
 It produces python-sampled.folded, python-sampled.svg and pyspy-status.json from the same source snapshot and fixed-work driver. The SVG is generated from the retained raw recording; widths count **samples**, not function calls or nanoseconds. Fewer than 1,000 samples triggers a quality warning, not automatic rejection or certification. Increase profile_calls if needed.
 
-**This profile covers the driver process, including imports and its warmup.** It does not use perf's FIFO measurement gate, and these frames have not been silently filtered out. Keep that scope distinction when comparing it with native perf or cProfile. Sampling is diagnostic: it can perturb execution, especially on a single vCPU. With affinity configured, sampler and child use the selected CPU set. Errors are retained without changing ptrace settings or requiring root automatically.
+The archived unfiltered profile covers the driver process, including imports and warmup. The normal course view exposes a second graph selected by stacks containing the exact measured-call wrapper; counts for both scopes are retained. Neither uses perf's FIFO gate. Sampling can perturb execution, especially on one vCPU. With affinity configured, sampler and child use the selected CPU set. Errors are retained without changing ptrace settings. A known post-capture child-reaping warning is accepted only with a validated workload and matching raw sample/error totals.
 
 ### 5. Optional combined Python/native frames
 

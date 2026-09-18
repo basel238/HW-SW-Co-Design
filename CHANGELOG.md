@@ -1,3 +1,12 @@
+# v4.2 — reliable course collection and compact results
+
+- Fixed newline/NUL perf ACK framing; retained strict timeouts, token checks, complete source-matched workloads and enable/disable acknowledgement requirements. Added a short gated preflight.
+- Genuine pinned pyperformance references with validated worker identity and frozen sources. Guide python3-dbg reference runs remain separate from release measurements.
+- Required perf-derived graphs. Supplementary Python sampling selects measured-wrapper stacks, retains unfiltered evidence and narrowly handles the validated child-exit warning.
+- One run folder, readable summaries, simple graph names and verified evidence.zip. Expanded details are removed only after hash verification; old results are untouched.
+- Source-study notes, compliance matrix, safe hash-checked updater and complete evidence export. No automatic claim that the student's interpretation is finished.
+- Baseline/candidate functions remain unchanged. No optimization is implemented.
+
 # v4.1 — confirmed orphan FlameGraph migration
 
 Handles the supplied root FlameGraph gitlink without .gitmodules at the exact bundled commit. Records the original pointer, preserves local contents and uses regular vendor files. Other submodules remain refused. Measurement scripts are unchanged.

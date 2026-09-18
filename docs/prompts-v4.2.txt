@@ -1,0 +1,7 @@
+Additional user requests addressed by v4.2. Preserve and supplement the existing prompt.txt; this is not the complete project AI history.
+
+1. Fix compliance gaps in the profiling scripts so results can finish the first three stages, including the ACK issue.
+2. Reduce the number of files and folders created by each run; make names and outputs direct and friendly for future analysis while checking compliance.
+3. After finishing, explain how to update local and remote Git repositories and take the changes to the VM.
+
+Implementation scope: measurement/profiling fixes, source-understanding notes, compact evidence presentation, safe toolkit updater and export. No benchmark optimization or hardware implementation was requested or supplied in this revision.
