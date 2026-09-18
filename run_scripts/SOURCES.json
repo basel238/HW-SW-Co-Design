@@ -1,0 +1,28 @@
+{
+  "package": "pyperformance",
+  "version": "1.14.0",
+  "wheel_sha256": "94068ac2935b6952ccb5e8a302eb9cebc26e82454494bef6e53822738adf0049",
+  "source_url": "https://pypi.org/project/pyperformance/1.14.0/",
+  "files": [
+    {
+      "benchmark": "nbody",
+      "path": "pyproject.toml",
+      "sha256": "806f36092bb771e26aecf135de446888c2c97f3e1ffc1571b80160f312cfdd7e"
+    },
+    {
+      "benchmark": "nbody",
+      "path": "run_benchmark.py",
+      "sha256": "d1385e816d7cfea361b7915e2cf70138cd6b84f40df8bd5152638851f7bcac2b"
+    },
+    {
+      "benchmark": "raytrace",
+      "path": "pyproject.toml",
+      "sha256": "b003d38fa3d472ac4a67a0e692160ba3e87c0b2dc60b94737767a79da45f159c"
+    },
+    {
+      "benchmark": "raytrace",
+      "path": "run_benchmark.py",
+      "sha256": "88ef4d9060d8e8f6ce40f376477aaf89cc808fa44813225a3071a05a1467f017"
+    }
+  ]
+}

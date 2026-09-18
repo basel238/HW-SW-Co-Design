@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+results/**/perf.data*
+results/**/native-stacks.txt
+results/**/*.pstats
+results/**/source/
+results/**/*.ppm
+results/**/*.fifo
+results/**/jitted-*.so
+# Keep source, metadata, JSON, readable reports, folded stacks and SVGs.
+# Retain ignored raw traces locally or archive them separately before cleanup.

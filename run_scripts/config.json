@@ -1,0 +1,13 @@
+{
+  "timing": {"processes": 20, "values": 3, "warmups": 1, "loops": 1},
+  "nbody": {"iterations": 20000, "profile_calls": 40, "profile_warmups": 1},
+  "raytrace": {"width": 100, "height": 100, "profile_calls": 10, "profile_warmups": 1},
+  "stat_repeats": 3,
+  "compare_rounds": 2,
+  "mpki": true,
+  "pyspy": {"enabled": true, "rate": 250},
+  "sample_frequency": 499,
+  "unwind": "dwarf,16384",
+  "affinity": null,
+  "command_timeout_seconds": 1800
+}
