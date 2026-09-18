@@ -1,0 +1,161 @@
+{
+  "schema_version": 2,
+  "benchmarks": {
+    "nbody": {
+      "source_review": {
+        "path": "/root/HW-SW-Co-Design/docs/stage1-nbody.md",
+        "available": true,
+        "review": "human review pending",
+        "sha256": "57f6a5bca0c8ccf2154d4b7e19c0ff925e83daa51f1e4b1f671abfb26ac9920f"
+      },
+      "timing": {
+        "path": "details/nbody-baseline-timing",
+        "available": true
+      },
+      "native": {
+        "path": "details/nbody-baseline-native",
+        "available": true,
+        "missing_files": [],
+        "stack_health": "review_required",
+        "stack_warnings": [
+          "No configured red flag fired; inspect native call paths and symbols manually before drawing conclusions."
+        ],
+        "human_stack_review": "pending",
+        "flame_graph_source": "perf record -> perf script -> stackcollapse-perf.pl -> flamegraph.pl"
+      },
+      "python_calls": {
+        "path": "details/nbody-baseline-python",
+        "available": true
+      },
+      "python_sampling": {
+        "available": false,
+        "skipped": true,
+        "reason": "Explicitly disabled supplementary sampling."
+      },
+      "counters": {
+        "path": "details/nbody-baseline-stat",
+        "available": true
+      }
+    },
+    "raytrace": {
+      "source_review": {
+        "path": "/root/HW-SW-Co-Design/docs/stage1-raytrace.md",
+        "available": true,
+        "review": "human review pending",
+        "sha256": "942a1f7e76f9d01d3a1b866440216a6354d2217c5dfd0ad28b220dd1f1730e25"
+      },
+      "timing": {
+        "path": "details/raytrace-baseline-timing",
+        "available": true
+      },
+      "native": {
+        "path": "details/raytrace-baseline-native",
+        "available": true,
+        "missing_files": [],
+        "stack_health": "needs_review",
+        "stack_warnings": [
+          "At least one folded stack reaches depth 127 or more, including its command frame."
+        ],
+        "human_stack_review": "pending",
+        "flame_graph_source": "perf record -> perf script -> stackcollapse-perf.pl -> flamegraph.pl"
+      },
+      "python_calls": {
+        "path": "details/raytrace-baseline-python",
+        "available": true
+      },
+      "python_sampling": {
+        "available": false,
+        "skipped": true,
+        "reason": "Explicitly disabled supplementary sampling."
+      },
+      "counters": {
+        "path": "details/raytrace-baseline-stat",
+        "available": true
+      }
+    }
+  },
+  "required_missing": [],
+  "optional_warnings": [],
+  "interpreter_kind": "debug",
+  "automated_collection_complete": true,
+  "coursework_complete": false,
+  "manual_review": "pending",
+  "scope": "Stages 1-3 baseline only: code understanding, runtime and profiling/bottleneck evidence. No optimization.",
+  "guide_interpretation": "All measurements use the same debug Python; the main framework and native profiles cover the guide interpreter requirement.",
+  "manual_tasks": [
+    "Review both stage-1 explanations and cite the selected frozen sources.",
+    "Record the actual VM/host settings in ENVIRONMENT.md.",
+    "Inspect native graphs, self tables, sample loss and stack-health warnings.",
+    "Write benchmark-specific bottleneck conclusions using the new evidence; distinguish hypotheses from measured causes."
+  ],
+  "actions": {
+    "perf enable/disable smoke test": {
+      "path": "details/perf-gate-probe",
+      "available": true
+    },
+    "debug pyperformance framework reference": {
+      "path": "details/debug-pyperformance-reference",
+      "available": true
+    },
+    "nbody debug timing": {
+      "path": "details/nbody-baseline-timing",
+      "available": true
+    },
+    "nbody debug perf profile": {
+      "path": "details/nbody-baseline-native",
+      "available": true,
+      "missing_files": [],
+      "stack_health": "review_required",
+      "stack_warnings": [
+        "No configured red flag fired; inspect native call paths and symbols manually before drawing conclusions."
+      ],
+      "human_stack_review": "pending",
+      "flame_graph_source": "perf record -> perf script -> stackcollapse-perf.pl -> flamegraph.pl"
+    },
+    "nbody cProfile (supplementary)": {
+      "path": "details/nbody-baseline-python",
+      "available": true
+    },
+    "nbody hardware/software counters (supplementary)": {
+      "path": "details/nbody-baseline-stat",
+      "available": true
+    },
+    "raytrace debug timing": {
+      "path": "details/raytrace-baseline-timing",
+      "available": true
+    },
+    "raytrace debug perf profile": {
+      "path": "details/raytrace-baseline-native",
+      "available": true,
+      "missing_files": [],
+      "stack_health": "needs_review",
+      "stack_warnings": [
+        "At least one folded stack reaches depth 127 or more, including its command frame."
+      ],
+      "human_stack_review": "pending",
+      "flame_graph_source": "perf record -> perf script -> stackcollapse-perf.pl -> flamegraph.pl"
+    },
+    "raytrace cProfile (supplementary)": {
+      "path": "details/raytrace-baseline-python",
+      "available": true
+    },
+    "raytrace hardware/software counters (supplementary)": {
+      "path": "details/raytrace-baseline-stat",
+      "available": true
+    }
+  },
+  "gate_probe": {
+    "path": "details/perf-gate-probe",
+    "available": true
+  },
+  "framework_reference": {
+    "path": "details/debug-pyperformance-reference",
+    "available": true
+  },
+  "literal_guide_collection_complete": true,
+  "evidence": {
+    "archive": "evidence.zip",
+    "verified_files": 881,
+    "details_retained": false
+  }
+}
