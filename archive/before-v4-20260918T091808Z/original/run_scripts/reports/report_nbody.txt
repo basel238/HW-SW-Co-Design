@@ -1,0 +1,13 @@
+NBODY - WRITTEN REPORT TEMPLATE (NOT COMPLETED RESULTS)
+
+1. Overview: numerical simulation, data structures, dependencies and exact source.
+2. Method: interpreter, VM configuration, timing boundary, fixed profiling work.
+3. Initial results: timing distribution, native/Python profiles and counter limits.
+4. Bottleneck hypothesis: connect actual source operations to measured evidence.
+5. Optimization: exact patch and correctness evidence.
+6. Comparison: paired release measurements, reduction, uncertainty and limitations.
+7. Hardware: selected region, interface, complete design and justified trade-offs.
+8. Conclusion and reproduction commands.
+
+Use the new results directories as evidence. Do not paste raw perf output in
+place of analysis. No optimization or hardware result is claimed by this template.
