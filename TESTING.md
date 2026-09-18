@@ -1,3 +1,17 @@
+# v4.2 validation
+
+Validated 18 September 2026. **48 automated tests passed** under release CPython 3.12, including real FIFO ACK exchanges, invalid/missing replies, workload receipts, sampler validation, verified compaction, safe repository updates and evidence export.
+
+The compact course integration tests run both real shortened benchmark timings and cProfile captures, the actual FIFO workload driver and bundled Perl renderer. Perf observations and their framework reference are explicitly synthetic fixtures. They verify one run directory with both benchmark summaries/graphs/timings and a verified archive containing raw recordings and source snapshots. A failed-gate run still produces an incomplete report and cannot be replaced by a Python graph.
+
+Separately, **actual pyperformance 1.14.0 smoke runs passed for both benchmarks**, using 2,000 nbody iterations and 24×24 raytrace, one value each. These validate genuine framework invocation, manifest paths, dependencies, worker interpreter executable hash and source identity. Smoke numbers are not performance evidence. Delivered defaults remain 20,000 iterations / 100×100 and 20 timing workers.
+
+Real Linux perf/PMU measurements, DWARF unwinding, the debug-interpreter guide workflow and successful live py-spy sampling require a rerun on the VM. There is no usable perf installation here. Synthetic tests do not validate virtual-PMU accuracy, caller ancestry or an optimization. The new gate probe and output checks expose target-machine failures.
+
+The complete packaged updater also passed a temporary v4.1 Git-repository integration check: dry-run changed nothing; apply replaced 35 toolkit files; every backup hash matched; custom configuration, an edited candidate and historical results survived; HEAD was unchanged. After committing the fixture update, reapplication was a no-op. All 21 shell scripts passed `bash -n`; all 21 toolkit/test Python files parsed successfully. These Git checks did not access your local or remote repository.
+
+After setup, run `.venv/bin/python -m unittest discover -s tests -v`. Earlier validation below is historical context; earlier failed results are not repaired by this update.
+
 # v4.1 orphan-gitlink validation
 
 Reproduced the supplied stage-0 FlameGraph gitlink at 41fee1f99f9276008b7cd112fca19dc3ea84ac32 without .gitmodules. Tested empty and populated local directories: plan left HEAD/files unchanged; apply created a clean branch/commit; MIGRATION.json preserved path and SHA; local contents survived in the archive; the original pointer remained in HEAD^; installed vendor tools were ordinary files. An unrelated submodule was refused without changes. A missing working-tree gitlink directory is a dirty-tree case and remains refused by the existing clean-tree check. Tests ran on temporary repositories, not the user checkout.

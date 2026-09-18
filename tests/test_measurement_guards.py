@@ -101,7 +101,7 @@ class MeasurementGuards(unittest.TestCase):
         real_command = p.command
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder) / 'project'
-            shutil.copytree(package, root, ignore=shutil.ignore_patterns('.venv','results','__pycache__','.git'))
+            shutil.copytree(package, root, ignore=shutil.ignore_patterns('.venv','.venv-guide','.course-cache','results','__pycache__','.git'))
             binary = root / 'synthetic-py-spy'
             binary.write_text('TEST FIXTURE ONLY\n')
             def simulate(argv, directory, name, *args, **kwargs):
@@ -112,8 +112,14 @@ class MeasurementGuards(unittest.TestCase):
                     else:
                         self.assertEqual(argv[argv.index('--format')+1], 'raw')
                         raw = Path(argv[argv.index('--output')+1])
-                        raw.write_text('module;advance (fixture.py:1) 600\nmodule;offset (fixture.py:2) 400\n')
-                        (directory / 'workload.json').write_text('{"status":"ok"}')
+                        raw.write_text('module;run_measured_calls (' + str(root/'tools/workload.py') + ':200);advance (fixture.py:1) 600\nmodule;offset (fixture.py:2) 400\n')
+                        source = directory/'source/run_benchmark.py'
+                        receipt = dict(status='ok', benchmark='nbody', calls=settings['nbody']['profile_calls'],
+                                       completed_calls=settings['nbody']['profile_calls'], warmups=1, completed_warmups=1,
+                                       source_sha256=p.digest(source), source_tree_sha256=p.tree_hash(source.parent))
+                        (directory / 'workload.json').write_text(json.dumps(receipt))
+                        (directory / 'pyspy.stdout.txt').write_text('Wrote raw flamegraph data. Samples: 1000 Errors: 0\n')
+                        (directory / 'pyspy.stderr.txt').write_text('')
                     return 0
                 return real_command(argv, directory, name, *args, **kwargs)
             with patch.object(p, 'ROOT', root), patch.object(p, 'TOOLS', root/'tools'), \
@@ -125,6 +131,8 @@ class MeasurementGuards(unittest.TestCase):
             self.assertIn('NOT perf-gated', status['scope'])
             self.assertIn('<svg', (out/'python-sampled.svg').read_text())
             self.assertIn('samples', (out/'python-sampled.svg').read_text())
+            self.assertEqual(status['measured_sample_count'], 600)
+            self.assertIn('<svg', (out/'python-measured.svg').read_text())
 
 
 if __name__ == '__main__':

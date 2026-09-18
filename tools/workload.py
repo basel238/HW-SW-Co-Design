@@ -109,6 +109,8 @@ class PerfGate:
         self.control_fd = None
         self.ack_fd = None
         self.may_be_enabled = False
+        self.enable_acknowledged = False
+        self.disable_acknowledged = False
         self.buffer = b""
 
     def open(self):
@@ -167,10 +169,17 @@ class PerfGate:
             if len(self.buffer) > 4096:
                 raise RuntimeError("Unexpected oversized perf acknowledgement")
         line, self.buffer = self.buffer.split(b"\n", 1)
-        if line.strip() != b"ack":
+        # Linux perf 5.15 writes sizeof("ack\n"), including the terminating
+        # NUL. It can arrive with this line or at the beginning of the next
+        # read. Consume boundary padding only: embedded NULs, other replies,
+        # unbounded padding, and missing replies must still fail closed.
+        if line.strip(b"\x00 \t\r") != b"ack":
             raise RuntimeError(f"Unexpected perf acknowledgement: {line!r}")
+        if command == "enable":
+            self.enable_acknowledged = True
         if command == "disable":
             self.may_be_enabled = False
+            self.disable_acknowledged = True
 
     def close(self):
         for name in ("control_fd", "ack_fd"):
@@ -188,6 +197,20 @@ def reserve_file(path):
 
 def _signal_interrupt(signum, _frame):
     raise KeyboardInterrupt(f"Received signal {signum}")
+
+
+def run_measured_calls(call, calls, result):
+    """Stable sampling marker enclosing only the measured benchmark calls.
+
+    Profilers can select this function in this exact source file to exclude
+    imports and warmups without depending on changing source line numbers.
+    A call that raises is not counted as completed.
+    """
+    durations = []
+    for _ in range(calls):
+        durations.append(call())
+        result["completed_calls"] += 1
+    return durations
 
 
 def main(argv=None):
@@ -218,6 +241,7 @@ def main(argv=None):
                        if args.benchmark == "nbody" else {"width": args.width, "height": args.height}),
         "wall_seconds": None, "process_cpu_seconds": None,
         "reported_benchmark_seconds": None, "roi_gated": bool(args.control_fifo),
+        "enable_acknowledged": False, "disable_acknowledged": False,
         "cprofile": str(args.cprofile) if args.cprofile else None,
         "nbody_state_policy": "one imported module; state continues across warmups and measured calls; bench_nbody offsets momentum on every call",
         "measurement_scope": "fixed benchmark calls plus driver loop/timer overhead; imports and warmups excluded from gated counters; FIFO boundary cost remains",
@@ -265,15 +289,12 @@ def main(argv=None):
                 gate = PerfGate(args.control_fifo, args.ack_fifo, args.control_timeout)
                 gate.open()
                 gate.command("enable")
-            durations = []
             start_wall = time.perf_counter()
             start_cpu = time.process_time()
             try:
                 if profile:
                     profile.enable()
-                for _ in range(args.calls):
-                    durations.append(call())
-                    result["completed_calls"] += 1
+                durations = run_measured_calls(call, args.calls, result)
             finally:
                 if profile:
                     profile.disable()
@@ -295,6 +316,8 @@ def main(argv=None):
             except BaseException as exc:
                 result["errors"].append(f"Counter disable cleanup: {type(exc).__name__}: {exc}")
             finally:
+                result["enable_acknowledged"] = gate.enable_acknowledged
+                result["disable_acknowledged"] = gate.disable_acknowledged
                 gate.close()
         if profile:
             try:

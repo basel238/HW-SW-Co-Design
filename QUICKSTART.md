@@ -1,70 +1,20 @@
-# Start here — complete v4 repository package
+# Start here — v4.2
 
-For an existing Git repository, use MIGRATION.md first. For a standalone run, extract the whole directory into your Ubuntu VM. Keep the same release Python version as before; Python 3.12/3.13 is not required for the main workflow.
+Already using v4/v4.1? Follow **UPDATING.md** for the local update, GitHub push and VM pull. Keep the same release Python version for comparable measurements. Install at the repository root.
 
-```bash
-cd project-repo-v4.1
-PYTHON_BIN=/usr/bin/python3 bash scripts/00_setup.sh
-bash script_nbody.sh
-bash script_raytrace.sh
-```
-
-Setup creates a local environment and installs the pinned benchmark/profiling dependencies. It attempts to install py-spy by default. It never installs system packages or changes permissions/sysctls. If required, Ubuntu's matching guest-kernel perf package and Perl must be installed separately as described in README.md.
-
-The wrappers collect fresh timing, cProfile, PMU capability probes, a Python sampling flame graph, grouped counters/MPKI, and a native flame graph. Each stage creates a unique results directory. The timing directory's pipeline-summary.json links all stages. **Exit 3 means a requested diagnostic was unavailable or failed validation; inspect the saved files.** Timing and other completed stages are retained. Missing cycles stays missing IPC.
-
-If py-spy cannot be installed or run, the remaining measurements still work. Set `pyspy.enabled` to false in config.json to omit it from the full workflow. This does not affect the standalone sampling command.
-
-## What to inspect
-
-| Output | Purpose |
-|---|---|
-| timing.json, stats.stdout.txt, hist.stdout.txt | Unprofiled timing and variability |
-| capabilities.md / capabilities.json | Counter probe results and specific failure categories |
-| stat-summary.md / stat-summary.json | Counters, miss fractions, MPKI, IPC/CPI when valid, per-call normalization |
-| native.svg, native-self.txt, stack-health.json | Native sampled hotspots and unwind warnings |
-| python-sampled.svg, python-sampled.folded, pyspy-status.json | Python statistical sampling and recorded scope/status |
-| python.pstats.txt | Python function call counts and instrumented self/cumulative rankings |
-
-The py-spy recording includes driver startup and warmup. Native perf counters/samples use the gated benchmark region. These are explicitly different scopes. Neither profiler's elapsed time is the optimization timing result.
-
-## Optimize and compare
-
-Edit the candidate under `src/optimized/nbody/` or `src/optimized/raytrace/`; preserve the benchmark entry points and workload semantics. Baseline source is verified against recorded upstream hashes.
+On the VM, from the repository:
 
 ```bash
-bash scripts/04_optimize_compare.sh nbody
-bash scripts/04_optimize_compare.sh raytrace
+bash scripts/00_setup.sh
+bash scripts/13_course_stages.sh
 ```
 
-This checks numerical/image correctness, runs fresh AB/BA timing rounds, validates provenance and computes worker-based uncertainty. It saves summary/summary.md, source.diff, source-changes.json and rounds.json. Candidate files initially equal baseline, so an unmodified candidate should return exit 3, not claim success.
+This collects both benchmarks into **one** `results/run-.../` folder. Open its **README.md** first, then `nbody/README.md` and `raytrace/README.md`. They contain compact timing/counter summaries and links to `perf.svg`, supplementary `python.svg` and separate debug `guide-perf.svg`, when available. Complete raw evidence is in **evidence.zip**, with checked hashes. Old runs are untouched.
 
-Comparison exit codes: 0 = declared evidence gate met; 3 = valid evidence below the gate or unchanged source; 2 = invalid/incompatible evidence or correctness failure. See README.md for the distinction between a 7% point estimate and an interval entirely above 7%.
+The default requires genuine pyperformance execution and perf graphs. It attempts the guide's separate debug reference. To intentionally postpone that reference, pass `--release-only`; the summary will not claim literal guide completeness. Missing perf evidence produces exit 3 and a clear report. Unsupported optional counters never manufacture IPC or replace the required graph.
 
-To profile an optimized variant separately:
+Read **STAGES_1_3.md** for the requirement matrix, output meanings and interpretation tasks. Review `docs/stage1-nbody.md` and `docs/stage1-raytrace.md`, fill `ENVIRONMENT.md`, and write your report from fresh measurements.
 
-```bash
-bash script_nbody.sh optimized
-bash script_raytrace.sh optimized
-```
+For one benchmark only, run `bash script_nbody.sh` or `bash script_raytrace.sh`. For a short ACK check: `bash scripts/15_perf_gate_probe.sh`. For expanded raw output, append `--keep-details` to the course command. Lower-level diagnostic scripts still expose detailed stage output for troubleshooting.
 
-## Optional diagnostics
-
-```bash
-bash scripts/07_diagnose_pmu.sh --reference-cycles
-bash scripts/10_python_sampling.sh nbody
-bash scripts/09_topdown_optional.sh nbody baseline --cpu 0
-# Supported newer Python/perf builds only; never required for baseline timing:
-bash scripts/11_python_perf.sh nbody --mode map
-bash scripts/11_python_perf.sh nbody --mode jit
-```
-
-Reference cycles are never substituted for core cycles. Top-down is explicitly system-wide on the selected CPU. Python/perf map/JIT profiles are instrumented diagnostics and require documented capabilities; unsupported modes exit 3 with a reason.
-
-## Reproduce software guard tests
-
-```bash
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-These use synthetic observations to verify measurement decisions, not your hardware. Fill in ENVIRONMENT.md before collecting final report data. TESTING.md records what was verified during preparation and which hardware checks remain.
+No optimization is applied. Later, edit only `src/optimized/`, then run `bash scripts/04_optimize_compare.sh nbody` or `raytrace` for correctness and fresh paired timing. Unchanged candidate sources do not count as an optimization.

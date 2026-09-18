@@ -19,11 +19,13 @@ import sysconfig
 import uuid
 from measurement_extras import (write_counter_summary, source_diff, probe_status,
                                 jit_perf_version_supported)
+from profile_evidence import assess_python_capture
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
 PY = sys.executable
 BENCHMARKS = ("nbody", "raytrace")
+RUN_ROOT = None  # Set only by the course workflow; child stages stay in one run.
 
 
 def dump(path, value):
@@ -167,10 +169,14 @@ def preflight():
 
 
 def new_run(label):
-    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
-    path = ROOT / "results" / (stamp + "-" + label + "-" + uuid.uuid4().hex[:8])
-    path.mkdir(parents=True)
-    print("Results:", path, flush=True)
+    if RUN_ROOT is not None:
+        path = Path(RUN_ROOT) / label
+        path.mkdir(parents=True, exist_ok=False)
+    else:
+        stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+        path = ROOT / "results" / (label + "-" + stamp + "-" + uuid.uuid4().hex[:4])
+        path.mkdir(parents=True, exist_ok=False)
+        print("Results:", path, flush=True)
     return path
 
 
@@ -190,7 +196,7 @@ def snapshot(bench, variant, out, c):
             "timing": dict(c["timing"], affinity=c["affinity"]),
             "toolkit_sha256": tree_hash(TOOLS), "configuration": c}
     dump(out / "provenance.json", prov)
-    shutil.copyfile(ROOT / "config.json", out / "config.json")
+    dump(out / "config.json", c)
     shutil.copyfile(ROOT / "ENVIRONMENT.md", out / "environment-notes.md")
     # Read-only diagnostics are outside all measured regions.
     for argv, name in [(["uname", "-a"], "uname"), (["lscpu"], "lscpu"),
@@ -231,6 +237,13 @@ def timing(bench, variant, c):
         argv += ["--affinity", str(c["affinity"])]
     print("Running unprofiled timing:", bench, variant, flush=True)
     require(command(argv, out, "timing", c["command_timeout_seconds"]), "Timing failed")
+    import pyperf
+    suite = pyperf.BenchmarkSuite.load(str(out / "timing.json"))
+    if suite.get_benchmark_names() != [bench]:
+        raise RuntimeError("Timing output does not identify the requested benchmark")
+    values = suite.get_benchmark(bench).get_values()
+    if len(values) != t["processes"] * t["values"] or any(not math.isfinite(x) or x <= 0 for x in values):
+        raise RuntimeError("Timing output is incomplete or contains invalid values")
     for action in ("metadata", "check", "stats", "hist", "dump"):
         command([PY, "-m", "pyperf", action, str(out / "timing.json")], out, action, timeout=60)
     return out
@@ -255,12 +268,71 @@ def perf_gated(prefix, bench, source, out, c, name, scope=None, python_flags=())
         receipt = json.loads((out / "workload.json").read_text())
     except (OSError, ValueError):
         receipt = {}
-    ok = rc == 0 and receipt.get("status") == "ok" and receipt.get("roi_gated") is True
+    issues = receipt_issues(receipt, bench, source, c)
+    if not isinstance(receipt, dict):
+        receipt = {}
+    if rc:
+        issues.append("perf/workload returned " + str(rc))
+    for key in ("roi_gated", "enable_acknowledged", "disable_acknowledged"):
+        if receipt.get(key) is not True:
+            issues.append(key + " was not confirmed")
+    ok = not issues
     dump(out / "collection.json", {"available": ok, "returncode": rc,
          "scope": scope or "target process; perf enable/disable handshake around fixed benchmark calls",
          "note": "Tiny boundary/driver overhead remains; perf elapsed includes excluded setup.",
-         "completed_calls": receipt.get("completed_calls")})
+         "completed_calls": receipt.get("completed_calls"), "validation_errors": issues,
+         "workload_errors": receipt.get("errors", [])})
     return ok
+
+
+def receipt_issues(receipt, bench, source, c):
+    if not isinstance(receipt, dict):
+        return ["Workload receipt is not an object"]
+    expected = {"status": "ok", "benchmark": bench,
+                "calls": c[bench]["profile_calls"],
+                "completed_calls": c[bench]["profile_calls"],
+                "warmups": c[bench]["profile_warmups"],
+                "completed_warmups": c[bench]["profile_warmups"],
+                "source_sha256": digest(source),
+                "source_tree_sha256": tree_hash(Path(source).parent)}
+    return [key + " does not match the requested workload"
+            for key, value in expected.items() if receipt.get(key) != value]
+
+
+def gate_probe(c):
+    """Exercise the real control protocol before a long run, independently of PMU events."""
+    probe = json.loads(json.dumps(c))
+    probe["nbody"].update(iterations=2000, profile_calls=2, profile_warmups=1)
+    out = new_run("perf-gate-probe")
+    source = snapshot("nbody", "baseline", out, probe)
+    observations = {}
+    selections = [
+        ("stat", ["perf", "stat", "-x", ";", "--no-big-num", "-e", "task-clock",
+                  "-o", str(out / "stat" / "counters.csv")]),
+        ("record", ["perf", "record", "-P", "-e", "cpu-clock:u", "-F", "99",
+                    "--call-graph", c["unwind"], "-o", str(out / "record" / "perf.data")]),
+    ]
+    for label, prefix in selections:
+        dest = out / label
+        try:
+            ok = perf_gated(prefix, "nbody", source, dest, probe, "perf-" + label)
+            if label == "stat":
+                events = parse_stat(dest / "counters.csv")
+                metric = stat_metrics(events, None, ok)
+                ok = ok and bool(events) and metric["all_emitted_events_usable"]
+            else:
+                ok = ok and (dest / "perf.data").is_file() and (dest / "perf.data").stat().st_size > 0
+            observations[label] = {"passed": bool(ok), "directory": str(dest)}
+        except (OSError, ValueError, RuntimeError) as exc:
+            observations[label] = {"passed": False, "directory": str(dest), "error": str(exc)}
+    passed = all(item["passed"] for item in observations.values())
+    dump(out / "gate-probe.json", {"passed": passed, "probes": observations,
+         "scope": "Short actual perf stat/record FIFO smoke tests, not benchmark results or PMU fidelity checks."})
+    (out / "gate-probe.md").write_text("# Perf gate smoke test\n\n" +
+        "\n".join(f"- {name}: {'passed' if item['passed'] else 'FAILED'}; {item['directory']}"
+                  for name, item in observations.items()) +
+        "\n\nBoth enable and disable acknowledgements and full workload receipts are required.\n")
+    return out, passed
 
 
 def parse_stat(path):
@@ -303,6 +375,10 @@ def stat_metrics(events, pair, collected):
             status = "invalid_zero_for_active_workload"
         elif event.get("running_percent") is None:
             status = "running_fraction_unavailable"
+        elif not 0 <= event["running_percent"] <= 100:
+            status = "invalid_running_fraction"
+        elif event.get("counter_runtime") is None or event["counter_runtime"] <= 0:
+            status = "invalid_counter_runtime"
         elif event["running_percent"] < 95:
             status = "insufficient_running_fraction"
         else:
@@ -330,6 +406,8 @@ def stat_metrics(events, pair, collected):
         reason = "running fraction unavailable"
     elif min(num["running_percent"], den["running_percent"]) < 95:
         reason = "less than 95% counted; inspect multiplexing/scheduling"
+    elif not num.get("usable") or not den.get("usable"):
+        reason = "event count, runtime or running fraction failed validation"
     elif metric.endswith("_percent") and num["count"] > den["count"]:
         reason = "miss count exceeds reference count; investigate event semantics"
     result[metric] = None if reason else factor * num["count"] / den["count"]
@@ -364,8 +442,13 @@ def stat(bench, variant, c):
                              "-e", selection], bench, source, dest, c, "perf-stat")
             record = stat_metrics(parse_stat(dest / "counters.csv"), pair, ok)
             record.update(group=label, repeat=repeat, calls=c[bench]["profile_calls"])
+            expected_names = {item.split(":")[0] for item in selection.strip("{}").split(",")}
+            observed_names = {item.split(":")[0] for item in record["events"]}
+            record["event_selection"] = selection
+            record["event_names_match_request"] = expected_names == observed_names
             record["all_requested_events_usable"] = (record["all_emitted_events_usable"] and
-                                                     len(record["events"]) == (5 if pair is None else 2))
+                                                     record["event_names_match_request"] and
+                                                     len(record["events"]) == len(expected_names))
             for event in record["events"].values():
                 event["per_benchmark_call"] = event["count"] / c[bench]["profile_calls"] if event["usable"] else None
             dump(dest / "metrics.json", record)
@@ -383,9 +466,10 @@ def stat(bench, variant, c):
     return out, status["all_requested_events_usable"]
 
 
-def native(bench, variant, c, python_mode=None):
-    out = new_run(bench + "-" + variant + ("-python-perf-" + python_mode if python_mode else "-native"))
+def native(bench, variant, c, python_mode=None, run_label_prefix=""):
+    out = new_run(run_label_prefix + bench + "-" + variant + ("-python-perf-" + python_mode if python_mode else "-native"))
     source = snapshot(bench, variant, out, c)
+    command(["perf", "version", "--build-options"], out, "perf-build-options", timeout=15)
     flags, extra, unwind = [], [], c["unwind"]
     if python_mode:
         info = {"mode": python_mode, "diagnostic_only": True,
@@ -421,12 +505,16 @@ def native(bench, variant, c, python_mode=None):
                      "--call-graph", unwind, "-o", str(out / "perf.data")] + extra,
                     bench, source, out, c, "perf-record", python_flags=flags)
     if not ok:
+        dump(out / "native-status.json", {"recorded": False, "postprocessed": False,
+             "human_review_required": True, "reason": "Gated recording failed; inspect collection.json"})
         if python_mode:
             info["unavailable_reason"] = "Recording or gated workload failed; inspect collection.json and perf-record.stderr.txt"
             dump(out / "python-perf-mode.json", info)
         print("Native profile unavailable; see collection.json and perf-record.stderr.txt.", flush=True)
         return out, False
     data = out / "perf.data"
+    command(["perf", "buildid-list", "-i", str(data), "--with-hits"], out,
+            "buildids", stdout_path=out / "buildids.txt", timeout=60)
     if python_mode == "jit":
         # JIT injection creates ELF sidecars: contain them in this run directory.
         rc = command(["perf", "inject", "-i", str(data), "--jit", "-o", str(out / "perf.jit.data")],
@@ -456,6 +544,17 @@ def native(bench, variant, c, python_mode=None):
     require(command([PY, str(TOOLS / "stack_health.py"), "--folded", str(out / "native.folded"),
                      "--report", str(out / "native-callgraph.txt"), "--output", str(out / "stack-health.json")],
                     out, "stack-health"), "Stack review failed")
+    health = json.loads((out / "stack-health.json").read_text())
+    valid_output = (health["folded"]["total_period_weight"] > 0 and
+                    health["folded"]["malformed_line_count"] == 0 and
+                    "<svg" in (out / "native.svg").read_text())
+    dump(out / "native-status.json", {"recorded": True, "postprocessed": valid_output,
+         "human_review_required": True, "stack_review_status": health["status"],
+         "stack_review_reasons": health["reasons"], "flamegraph_source": "perf record / perf script",
+         "event": "cpu-clock:u", "width_unit": "nanoseconds of event period",
+         "note": "A rendered graph is not automatically certified as valid ancestry."})
+    if not valid_output:
+        return out, False
     print("Inspect stack-health.json and native.svg before interpreting callers.", flush=True)
     if python_mode:
         frames_seen = "py::" in (out / "native.folded").read_text()
@@ -472,6 +571,12 @@ def python_profile(bench, variant, c):
     source = snapshot(bench, variant, out, c)
     argv = pinned(driver(bench, source, out, c) + ["--cprofile", str(out / "python.pstats")], c)
     require(command(argv, out, "cprofile", c["command_timeout_seconds"]), "Python profiling failed")
+    receipt = json.loads((out / "workload.json").read_text())
+    issues = receipt_issues(receipt, bench, source, c)
+    if issues:
+        raise RuntimeError("cProfile workload validation failed: " + "; ".join(issues))
+    import pstats
+    pstats.Stats(str(out / "python.pstats"))  # Reject an empty/truncated capture.
     return out
 
 
@@ -494,7 +599,8 @@ def pyspy_profile(bench, variant, c):
         (out / "README.md").write_text("# Python sampling profile\n\n" + status["scope"] + "\n\n" +
             status["measurement"] + "\n\n" + (reason or
             "Inspect python-sampled.svg and python-sampled.folded. Widths count samples, not function calls or nanoseconds.") +
-            "\n\nWarmup/startup samples have not been filtered out. Native perf has a different sampling scope.\n")
+            "\n\npython-sampled.svg retains startup/warmup. python-measured.svg selects stacks containing the measured-call wrapper. "
+            "Widths count samples, not calls. This selection is supplementary and is not perf gating.\n")
         print("Python sampling:", reason or "SVG and raw folded samples saved", flush=True)
         return out, status["available"]
     if not binary.is_file():
@@ -505,26 +611,34 @@ def pyspy_profile(bench, variant, c):
     if rc or version != "py-spy 0.4.2":
         return finish("Unexpected py-spy version; install requirements-profile.txt.")
     raw = out / "python-sampled.folded"
-    argv = [str(binary), "record", "--rate", str(c["pyspy"]["rate"]), "--format", "raw",
+    argv = [str(binary), "record", "--rate", str(c["pyspy"]["rate"]), "--full-filenames", "--format", "raw",
             "--output", str(raw), "--"] + driver(bench, source, out, c)
     # Pin sampler and child together when affinity is requested; record this choice.
     rc = command(pinned(argv, c), out, "pyspy", c["command_timeout_seconds"])
     try:
         receipt = json.loads((out / "workload.json").read_text())
-        weights = [int(line.rsplit(" ", 1)[1]) for line in raw.read_text().splitlines() if line.strip()]
-    except (OSError, ValueError, IndexError):
-        receipt, weights = {}, []
-    if rc or receipt.get("status") != "ok":
-        return finish("Sampler or benchmark failed; see pyspy.stderr.txt and workload.json. Permissions were not changed.")
-    if not weights or any(w <= 0 for w in weights):
-        return finish("No usable positive sample weights; increase fixed-work call count and inspect logs.")
-    status["sample_count"] = sum(weights)
-    status["sample_count_warning"] = "Few samples; rankings may be unstable" if sum(weights) < 1000 else None
-    rc = command(["perl", str(ROOT / "vendor/FlameGraph/flamegraph.pl"), "--countname", "samples",
-                  "--title", bench + " Python sampling (includes startup/warmup)", str(raw)],
-                 out, "pyspy-flamegraph", stdout_path=out / "python-sampled.svg")
-    if rc:
-        return finish("Raw samples saved, but SVG generation failed; inspect pyspy-flamegraph.stderr.txt.")
+        contents = raw.read_text()
+    except (OSError, ValueError):
+        receipt, contents = {}, ""
+    def log(name):
+        path = out / name
+        return path.read_text() if path.is_file() else ""
+    assessment, roi = assess_python_capture(rc, log("pyspy.stdout.txt"), log("pyspy.stderr.txt"),
+        contents, receipt_issues(receipt, bench, source, c), (TOOLS / "workload.py").resolve())
+    status.update(assessment)
+    status["driver_sha256"] = digest(TOOLS / "workload.py")
+    if not assessment["usable"]:
+        return finish("Capture validation failed: " + "; ".join(assessment["errors"]))
+    status["sample_count_warning"] = "Few measured samples; rankings may be unstable" if assessment["measured_sample_count"] < 1000 else None
+    roi_path = out / "python-measured.folded"
+    roi_path.write_text(roi)
+    for name, path, title in (("python-sampled", raw, "includes startup/warmup"),
+                              ("python-measured", roi_path, "measured-call stacks only")):
+        rc = command(["perl", str(ROOT / "vendor/FlameGraph/flamegraph.pl"), "--countname", "samples",
+                      "--title", bench + " supplementary Python sampling (" + title + ")", str(path)],
+                     out, name + "-flamegraph", stdout_path=out / (name + ".svg"))
+        if rc:
+            return finish("Raw samples saved, but SVG generation failed; inspect " + name + "-flamegraph.stderr.txt")
     status["available"] = True
     return finish()
 
@@ -638,6 +752,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
     sub.add_parser("preflight")
+    sub.add_parser("gate-probe", help="Short real perf stat and record FIFO smoke tests")
     diag = sub.add_parser("diagnose")
     diag.add_argument("--raw-intel-cycles", action="store_true",
                       help="Only after verifying that Intel raw event 0x3c/0 maps correctly on this CPU.")
@@ -661,6 +776,13 @@ def main():
     if args.action == "preflight":
         print("Preflight passed:", PY, "; baseline source hashes match pinned upstream.")
         return 0
+    if args.action == "gate-probe":
+        return 0 if gate_probe(c)[1] else 3
+    if args.action in ("stat", "native", "python-perf", "topdown"):
+        probe_dir, passed = gate_probe(c)
+        if not passed:
+            print("Perf gate preflight failed; long collection skipped. Inspect " + str(probe_dir), flush=True)
+            return 3
     if args.action == "diagnose":
         diagnose(c, args.raw_intel_cycles, args.reference_cycles)
         return 0
@@ -704,7 +826,11 @@ def main():
     except (OSError, ValueError, RuntimeError) as exc:
         errors["diagnose"] = str(exc)
     stages = [("pyspy", pyspy_profile)] if c["pyspy"]["enabled"] else []
-    stages += [("stat", stat), ("native", native)]
+    probe_dir, gate_ok = gate_probe(c)
+    if gate_ok:
+        stages += [("stat", stat), ("native", native)]
+    else:
+        errors["gate_probe"] = "Failed; stat/native skipped. Inspect " + str(probe_dir)
     for action, fn in stages:
         try:
             path, ok = fn(args.benchmark, args.variant, c)
@@ -721,7 +847,8 @@ def main():
               "pyspy": str(sampled) if sampled else None, "capabilities": str(capabilities) if capabilities else None,
               "pyspy_enabled": c["pyspy"]["enabled"], "pyspy_completed": sampled_ok,
               "perf_stat_all_requested_events_usable": stat_ok, "perf_record_completed": native_ok,
-              "profiling_errors": errors}
+              "perf_gate_probe": str(probe_dir), "profiling_errors": errors,
+              "course_completion": "This legacy initial pipeline is not the stages1-3 deliverables check. Use scripts/13_course_stages.sh."}
     dump(t / "pipeline-summary.json", status)
     print(json.dumps(status, indent=2))
     return 0 if stat_ok and native_ok and (sampled_ok or not c["pyspy"]["enabled"]) and not errors else 3
