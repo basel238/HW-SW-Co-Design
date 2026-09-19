@@ -8,6 +8,17 @@ This package replaces the original setup, baseline, counters, profiling and comp
 
 The benchmark functions are unchanged copies from pyperformance 1.14.0. The timing adapter uses pyperf 2.10.0's public Runner API, forwards all workload parameters to workers, and calls those exact functions. It does not invoke pyperformance's environment installer during measurement.
 
+To launch benchmark files directly without the custom Python workflow, use the new shell commands:
+
+```bash
+bash scripts/01_baseline.sh --direct nbody
+bash scripts/01_baseline.sh --direct raytrace
+bash scripts/03_perf_record_flame.sh --direct nbody
+bash scripts/03_perf_record_flame.sh --direct raytrace
+```
+
+These run the original benchmark entry points with debug Python and pyperf. Timing uses the original internal timer; profiling uses pyperf's built-in perf hook around benchmark calls, with small hook/call-boundary overhead. There is no `tools/workload.py` or custom Python pipeline in this path. Sources and existing results are preserved. See [scripts/direct/README.md](scripts/direct/README.md) for settings, outputs and scope. Direct hardware counters require the explicit `--whole-process` option because an unmodified benchmark has no perf-stat start/stop hook. Commands without `--direct` retain the course workflow described below.
+
 ## Start here
 
 From the updated repository (or extracted project-repo-v4.2 directory), inside the Ubuntu VM:
@@ -58,6 +69,7 @@ The main debug measurements cover the guide's interpreter choice. There is no du
 | scripts/13_course_stages.sh | Compact first-three-stage workflow, both benchmarks by default |
 | scripts/14_export_results.sh | Export local results, including Git-ignored recordings |
 | scripts/15_perf_gate_probe.sh | Short stat/record enable/disable control test |
+| scripts/direct/ | Independent shell launchers for original benchmark timing and built-in pyperf-hook profiling; explicitly scoped whole-process counters |
 | scripts/run_all.sh [BENCH [VARIANT]] | Compact course run; optimized variant retains advanced detailed diagnostics |
 | script_nbody.sh / script_raytrace.sh | Per-benchmark wrappers; default to stages 1–3 |
 | src/baseline/ | Upstream source locked by hashes; do not edit |

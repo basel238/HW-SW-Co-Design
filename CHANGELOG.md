@@ -1,3 +1,9 @@
+# Direct shell benchmark commands
+
+- Added independent shell timing and native-profile scripts, also selected by `--direct` on scripts 01 and 03. They execute the unchanged benchmark entry points and never load the custom Python toolkit.
+- Native profiling uses pyperf 2.10.0's built-in perf hook with initially disabled events, one worker, no warmup and fixed benchmark calls. Retains raw samples, native Self and a flame graph, with explicit hook/boundary scope.
+- Direct counters require `--whole-process`; startup/import/harness counts are never described as benchmark-only. Existing gated workflow, compact output, ACK fix, sources and results are unchanged.
+
 # Debug-only measurement update
 
 - All framework runs, timing, perf profiling, counters, Python profiling and optimization comparisons use debug CPython (`Py_DEBUG=1`) without `-O`/`-OO`.

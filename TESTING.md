@@ -1,3 +1,9 @@
+# Direct-script validation
+
+Validated 19 September 2026: **61 automated tests passed, with no skips**, under temporary debug CPython 3.12.10 (`Py_DEBUG=1`) on macOS. Six new tests exercise the direct shell entry points in an isolated copy containing no `tools/`, `config.json` or source manifest. They execute both real shortened benchmarks, verify candidate selection and preservation of previous outputs, reject invalid settings and optimized Python, and require explicit consent to whole-process counter scope.
+
+The native-profile test exercises the actual upstream pyperf hook and its FIFO enable/disable/stop exchange, including newline/NUL acknowledgments, against a synthetic perf fixture. Real bundled Perl tools render the synthetic stacks. The counter fixture launches the real benchmark but supplies synthetic counts. These checks validate integration, not Linux perf attachment, native unwind quality or PMU accuracy; those still require the Ubuntu VM. All shell scripts passed `bash -n`, and `git diff --check` passed. Benchmark sources, existing results, configuration and `tools/` were left unchanged.
+
 # Debug-only validation
 
 Validated 18 September 2026: **55 automated tests passed, with no skips**, under a temporary debug CPython 3.12.10 build (`Py_DEBUG=1`) on macOS. The suite covers debug-only launchers/workers, rejection of release comparison evidence and mismatched cached framework workers, removed CLI modes, setup preservation, the existing FIFO ACK framing checks and compact evidence archives. The synthetic sampler fixture now resolves its temporary driver path so it matches macOS's `/var` to `/private/var` alias.

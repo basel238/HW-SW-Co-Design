@@ -2,6 +2,8 @@
 
 Install at the repository root. All measurements now use one debug CPython environment (`Py_DEBUG=1`); collect fresh matched baselines and candidates. **UPDATING.md** describes transferring a reviewed update to the VM.
 
+For direct benchmark execution without the custom Python pipeline, run `bash scripts/01_baseline.sh --direct nbody` (or `raytrace`) after setup. For a native graph using pyperf's built-in benchmark-call hook, run `bash scripts/03_perf_record_flame.sh --direct nbody`. See [scripts/direct/README.md](scripts/direct/README.md) for the direct settings and counter-scope distinction. The course workflow below remains available separately.
+
 On the VM, from the repository:
 
 ```bash
